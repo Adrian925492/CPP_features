@@ -11,6 +11,7 @@ using namespace std;
 
 #include "CPP_Constructors/CPP_Constructors.hpp"
 #include "CPP_Cast/CPP_cast.hpp"
+#include "InteligentPointers/InteligentPointers.hpp"
 
 int main(void)
 {
@@ -20,6 +21,8 @@ int main(void)
 
 	castTest();
 	dynamicCastTest();
+
+	InteligentPointersTest();
 
 	return 0;
 }
