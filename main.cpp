@@ -12,6 +12,8 @@ using namespace std;
 #include "CPP_Constructors/CPP_Constructors.hpp"
 #include "CPP_Cast/CPP_cast.hpp"
 #include "InteligentPointers/InteligentPointers.hpp"
+#include "DynamicMemAlocation/DynamicMemAlocation.hpp"
+#include "Template/template.hpp"
 
 int main(void)
 {
@@ -23,6 +25,10 @@ int main(void)
 	dynamicCastTest();
 
 	InteligentPointersTest();
+
+	dynMemAllocationTest();
+
+	templateTest();
 
 	return 0;
 }
