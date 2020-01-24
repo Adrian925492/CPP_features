@@ -14,7 +14,8 @@ using namespace std;
 #include "InteligentPointers/InteligentPointers.hpp"
 #include "DynamicMemAlocation/DynamicMemAlocation.hpp"
 #include "Template/template.hpp"
-
+#include "Inheritance/Inheritance.hpp"
+#include "Functor and Lambda/functorAndLambda.hpp"
 
 
 int main(void)
@@ -31,6 +32,8 @@ int main(void)
 	dynMemAllocationTest();
 
 	templateTest();
+
+	FunctorAndLambdaTest();
 
 	return 0;
 }

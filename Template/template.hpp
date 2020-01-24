@@ -47,6 +47,29 @@ struct Silnia<0>
     enum { wartosc = 1 };
 };
 
+//Wariadic template
+
+int print(int i)
+{
+    cout<<endl<<i;
+    return 0;
+}
+
+int print(string i)
+{
+    cout<<endl<<i;
+    return 0;
+}
+
+template <typename Head, typename ...Tail>
+void variadicTemplate (Head head, Tail... a)
+{
+	cout << "Variadic template test: \n";
+	cout << head << "  ";
+	(print(a), ...);
+	cout << endl;
+}
+
 void templateTest()
 {
 	cout << "Template test " << endl;
@@ -57,6 +80,8 @@ void templateTest()
 
 	int sil = Silnia<4>::wartosc;
 	cout << "Silnia by template silnia 4 = 1*2*3*4 = 24 " << sil << endl;
+
+	variadicTemplate(1, 2, "Hello");
 
 }
 
