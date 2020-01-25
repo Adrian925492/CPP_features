@@ -16,7 +16,7 @@ using namespace std;
 #include "Template/template.hpp"
 #include "Inheritance/Inheritance.hpp"
 #include "Functor and Lambda/functorAndLambda.hpp"
-
+#include "FeaturesOfCpp11/cpp11_features.hpp"
 
 int main(void)
 {
@@ -34,6 +34,8 @@ int main(void)
 	templateTest();
 
 	FunctorAndLambdaTest();
+
+	cpp11featuresTest();
 
 	return 0;
 }

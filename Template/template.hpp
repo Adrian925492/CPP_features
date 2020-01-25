@@ -70,6 +70,16 @@ void variadicTemplate (Head head, Tail... a)
 	cout << endl;
 }
 
+//Alias template
+template <typename T>
+class KlasaA
+{
+	void foo(){}
+};
+
+using Aint = KlasaA<int>;
+typedef KlasaA<int> Aint_t;
+
 void templateTest()
 {
 	cout << "Template test " << endl;
@@ -82,6 +92,9 @@ void templateTest()
 	cout << "Silnia by template silnia 4 = 1*2*3*4 = 24 " << sil << endl;
 
 	variadicTemplate(1, 2, "Hello");
+
+	Aint a2;	//Alias do szablonu
+	Aint_t a3;	//Lub za pomoc¹ typedef
 
 }
 

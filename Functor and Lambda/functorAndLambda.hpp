@@ -32,6 +32,7 @@ void FunctorAndLambdaTest()
 	PlusDwa plusDwa;
 	int cztery = plusDwa(2);
 	cout << "Wynik funktora: " << cztery << endl;
+
 }
 
 
