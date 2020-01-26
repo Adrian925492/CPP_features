@@ -18,6 +18,14 @@ using namespace std;
 #include "Functor and Lambda/functorAndLambda.hpp"
 #include "FeaturesOfCpp11/cpp11_features.hpp"
 
+#include "SelectedDesignPatterns/ConstructPatterns/AbstractFactory.hpp"
+#include "SelectedDesignPatterns/ConstructPatterns/Singleton.hpp"
+
+#include "SelectedDesignPatterns/StructuralPatterns/Composite.hpp"
+#include "SelectedDesignPatterns/StructuralPatterns/Decorator.hpp"
+
+#include "SelectedDesignPatterns/OperationalPatterns/Observer.hpp"
+
 int main(void)
 {
 	cout << "Hello World!" << endl << endl;
@@ -36,6 +44,15 @@ int main(void)
 	FunctorAndLambdaTest();
 
 	cpp11featuresTest();
+
+
+	AbstractFactoryTest();
+	SingletonTest();
+
+	compositeTest();
+	decoratorTest();
+
+	ObserverTest();
 
 	return 0;
 }
