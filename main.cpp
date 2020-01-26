@@ -25,6 +25,7 @@ using namespace std;
 #include "SelectedDesignPatterns/StructuralPatterns/Decorator.hpp"
 
 #include "SelectedDesignPatterns/OperationalPatterns/Observer.hpp"
+#include "SelectedDesignPatterns/OperationalPatterns/ChainOfResponsibility.hpp"
 
 int main(void)
 {
@@ -53,6 +54,7 @@ int main(void)
 	decoratorTest();
 
 	ObserverTest();
+	chainOfRespTest();
 
 	return 0;
 }
