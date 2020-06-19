@@ -22,6 +22,16 @@
 **Namespace** – przestrzeń nazw. Dzięki zadeklarowaniu metody w danej p-ni nazw, możemy deklarować obiekty o tych samych nazwach w innych p-niach nazw.
 
 **Constexpr (C++11)** – oznaczamy tym funkcje, metody i dane ewaluowane (znane) na etapie kompilacji. Zmienne constexpr to takie dawne „definy” – ich wartość musi być zainicjalizowana w momencie tworzenia constexpr i nie może być zmieniona. Funkcje constexpr to funkcje, które rozwiązywane sa na etapie kompilacji, a ich efekt jest dopiero wkompilowywany (nie dzieją się w runtimie). 
+
+**Predyktat** - funkcja zwracająca typ logiczny boolean
+
+**Alias do typu** - w języku C++ możemy zdefiniować alias do typu, np:
+
+    using A = int;
+
+**Słowo kluczowe override** - dodane do deklaracji metody informuje kompilator, że spodziewamy się, że nadpisana zostanie metoda z nadklasy. Kompilator zgłosi błąd, jeśli metoda nadklasy nie będzie wirtualna.
+
+**Słowo kluczowe final** - dodane do deklaracji metody informuje kompilator, że spodziewamy się, że nadpisana zostanie metoda z nadklasy i będzie to ostatnie przeciążenie w hierarchii. Kompilator zgłosi błąd, jeśli metoda nadklasy nie będzie wirtualna.
 _______________________________________________________________
 
 ### Właściwości języów obiektowych ###
@@ -168,7 +178,7 @@ ______________________
 
 ___
 
-## Kwantyfikatory dostępu ##
+## Kwalifikatory dostępu ##
 
 **Public** - wszsytko jest jawne, dostępne na zewnątrz klasy
 
@@ -192,4 +202,97 @@ ______
 
 3)	**Wyjątki (C++)** – metody mogą rzucać wyjątkami (chyba że są zadeklarowane jako noeecept, wtedy, nawet jeśli rzuci wyjątkiem, nie zostanie on obsłużony), a wyjątki mogą być łatabe i obsługiwane na zewnątrz wywołania funkcji, w blokach try{   wywołanie funkcji} Catach(wyjarek1)… Catach(…) – dowolny inny wyjątek.
 
+_____
 
+## Rzutowanie ##
+
+1)	**Niejwane (domyślne)** – nie podajemy jawnie operatora rzutowania, a kompilator sam domyśla się w jaki sposób zrzutować dane
+
+2)	**W stylu C**– rzutować możemy wszystko na wszystko, ale rzutowanie polega na poinformowaniu kompilatora, że od tej pory dana typu A ma być traktowana jak dana typu B. Nie dochodzi do żadnej konwersji danej żeby pasowała do nowego typu.
+
+> !Rzutowanie w stylu C++ jest preferowane ze względu na jasną intencję autora co do typu rzutowania (te w stylu c++ są dłuższe i łatwiejsze do znalezienia), oraz, rzutowania w stylu c++ są przetwarzane przez kompilator, a te w stylu c już nie.
+
+3)	**Static_cast** – służy do rzutowania typów, najczęściej stosowany operator rzutowania. Jego działanie dla większości typów zasadniczo nie różni się od rzutowania w stylu C. W praktyce powoduje ten sam efekt co niejawna konwersja między typami. Jeśli niejawna konwersja jest zdefiniowana, możemy użyć static cast. Static cast nie zadziała jednak dla konwersji wskaźników lub referencji z const i volatile. Za pomocą static cast możemy śmiało konwertować wskaźniki i referencje „typowych” typów. Może być używany do dodania consta (ale nie do usunięcia). Static cast zapewnia ochronę przed rzutowaniem na typy, które do siebie nie pasują (np. chara do wskaźnika na inta, lub typu wskaźnikowego na typ bazowy).
+
+4)	**Const_cast** – rzutowanie typów z kwantyfikatorem const lub voltaile. Za pomocą const_cast można rzutować wyłącznie wskaźniki lub referencje, które różnią się od siebie kwantyfikatorem const lub volatile. Możemy np. zrzutować constowy wskaźnik lub referencję do niekonstowego obiektu na niekonstowy wskaźnik lub referencję. W praktyce powinniśmy unikać const_casta – jeżeli ktoś zakonstował jakiś wskaźnik lub referencję, to zrobił to intencjonalnie i nie powinniśmy naruszać tego ograniczenia.
+
+5)	**Dynamic_cast** – służy do rzutowania typów polimorficznych w górę, w dół i w poprzek hierarchi dziedziczenia. Podobnie jak const_cast służy do rzutowania referencji i wskaźników. Jeżeli rzutowanie się powiedzie, dynamic_cast zwraca wskaźnik do zrzutowanego obiektu, jeśli nie – zwraca nullptr. W górę hierarchii możemy rzutować niejawnie, za pomocą static casta, za pomocą rzutowania z C (nie zalecane – działa tylko jak mamy pojedyncze dziedziczenie – delta), lub za pomocą dynamic casta. W dół hierarchii – działa również static_cast, ale w bok – tylko dynamic cast.
+
+6)	**Reinterpret_cast** – służy do bezpośredniego rzutowania typu na typ. Używany rzadko, z rozwagą, bo nie zapewnie ochrony przed niepoprawnym rzutowaniem. Zazwyczaj służy do rzutowania – reinterpretacji ciągów bitowych. Jest podobny funkcjonalnością do rzutowania w stylu c.
+
+____
+
+## Dynamiczna alokacja pamięci ##
+
+W C++ możemy alokować pamięć dynamicznie tak samo jak w C. Istnieją też takie same rodzaje alokacji jak w C. Dodatkowo C++ udostępnia 2 nowe operatory – New do alokowania, a delete do zwalniania pamięci. Warto przyjrzeć się inteligentnym wskaźnikom (make_unique) aby nie alokować pamięci wprost.
+
+____
+
+## Inteligentne wskaźniki ##
+
+\<memory>
+
+Użycie inteligentnych wskaźników ma sens gdy korzystamy z dynamicznej alokacji pamięci. Gdy alokujemy pamięć, otrzymujemy wskaźnik na zaalokowaną jednostkę pamięci. Wskaźnik określonego typu. Zwyczajny wskaźnik pozwala na dostęp do zaalokowanej pamięci, pozwala się również skopiować. Co więcej, w przypadku, gdy nie ma potrzeby używania dłużej zaalokowanej pamięci, pamięć należy zwolnić (korzystając zresztą z otrzymanego wskaźnika). Czasami takich ścieżek, które prowadzą do bezużyteczności zaalokowanej pamięci jest wiele – wtedy należałoby w każdej pamiętać o zwolnieniu zasobów, bo inaczej narażamy się na wycieki pamięci. 
+
+Nieco pomocne może okazać się użycie inteligentnych wskaźników. Inteligentne wskaźniki kontrolują liczbę instancji wskaźników do obiektu, kontrolują również czas życia obiektu – gdy wskaźnik (lub wszystkie) zostanie zniszczony – zwalniana jest również pamięć na jakie wskazuje wskaźnik. Rozróżniamy 3 typy inteligentnych wskaźników:
+
+1)	**Unique_ptr** – dostęp do obiektu może odbywać się tylko poprzez jedną instancję takiego wskaźnika. Wskaźnika nie można kopiować, a jego zniszczenie jest jednoznaczne ze zniszczeniem obiektu. Tworzenie: poprzez operator New lub poprzez std::make_unique<>()
+
+2)	**Shared_ptr** – wskaźnik można kopiować, a sam wskaźnik ma liczbę instancji (licznik). Gdy liczba kopii się wyzeruje (wszystkie shared pointery zostaną zniszczone) – wtedy niszczony jest też sam obiekt. Tworzenie: poprzez operator New lub poprzez std::make_shared<>()
+
+3)	**Weak_ptr** – wskaźnik, który trzyma „nie dostępową” referencję do obiektu. Nie można za jego pomocą dostać się do obiektu (trzeba go przekształcić w shared_ptr metodą .lock()), służy bardziej do trzymania referencji i do łamania cykli referencyjnych. Za pomocą weak_ptr możemy się dowiedzieć, czy obiekt referencyjny nadal istnieje. Weak pointer jest podporządkowany do zasobu trzymanego przez inny wskaźnik. 
+
+**Cykl referencji** – pojawia się, gdy obiekty zawierają wskaźniki wskazujące na siebie nawzajem (np. lista wskazująca na poprzedni i następny obiekt).  Wtedy, nie da się usunąć elementu, bo shared_ptr do obiektu następnego jest również shared_ptr do poprzednika obiektu za nim – licznik referencji będzie równy 2. Gdy chcemy usunąć element ze środka – shared_ptr poprzednika nie pozwoli na zniszczenie zasobu (bo jego licznik referencji będzie równy 1) mini, że chcemy zniszczyć shared_ptr następnika. 
+
+___
+
+## Templaty ##
+
+**Template** - element języka umożliwiający programowanie uogólnione, to znaczy bez wcześniejszej znajomości konkretnych typów danych. Szablon rozwiązywany jest na etapie kompilacji, a konkretyzowany w momencie użycia zatemplatowanego obiektu.
+
+**Szablon klasy (typu)** – umożliwia zdefiniowanie nieznanego typu i używanie go w klasie (funkcji). Typ podaje się w momencie tworzenia instancji klasy. Co ważne, dla każdego podanego do instancji typu zostanie wygenerowany inny egzemplarz klasy.
+
+**Szablon wartości** - umożliwia zdefiniownie wartości określonego typu i używanie go w klasie (funkcji). Wartość podaje się w momencie użycia elementu.
+
+    //Function template
+    template <typename T, int N> T increment(T argument)
+    {
+        return N*(++argument);
+    }
+
+    //Class template
+    template <typename T>
+    class Klasa
+    {
+    public:
+        Klasa(T a): _a(a) {}
+        T decrement(T value);
+
+        T _a;
+    };
+
+! szablony można zagnieżdżać
+
+! szablon może mieć dowolnie dużo odwołań
+
+! Szablon może dotyczyć klasy lub funkcji
+
+! Szablon może służyć do rekurencyjnego, funkcyjnego programowania – wymaga szablonu z rekuencją i szablonu tzw. specjalizacji – kończącego rekurencję
+
+**Szablon wariadyczny** - umożliwia przekazanie nieznanej ilości typów (dowolnej ilości).
+
+    template <typename Head, typename ...Tail>
+    void variadicTemplate (Head head, Tail... a)
+    {
+        cout << "Variadic template test: \n";
+        cout << head << "  ";
+        (print(a), ...);
+        cout << endl;
+    }
+
+Znak "..." zostanie rozwinięty we wszystkie rpzekazane typy (wartości). Np *foo(Tail...)* wykona metodę foo na każdej wartośi przekazanej przez tamplate.
+___
+
+**Funktor** – klasa która posiada przeciążony operator (). Dzięki temu możemy używać jej jak zwykłą funkcję, ale posiada atrybuty klasy (może mieć stan np.) . Funktor jednoargumentowy nazywamy generatorem, dwuargumentowy - funkcją dwuargumentową, trzyargumentowy - funkcją trzyargumentową itd...
+
+**Funkcja lambda** – funkcja która nie posiada nazwy, która, której implementacja znajduje się w miejscu wywołania. Notacja lambda zawiera miejsce przechwytywania (gdzie wpisujemy wszystkie dane widoczne wewnątrz funkcji), listę argumentów i ciało mają składnie jak przy normalnej funkcji: *\[przechwywytywanie](args){impl;}*
