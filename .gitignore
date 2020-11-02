@@ -1,0 +1,3 @@
+# Blacklist selected directories
+build
+output
