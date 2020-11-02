@@ -42,6 +42,7 @@
 
 		- make output directory, ex. **mkdir build**
 		- init submodules by **git submodule init**
+		- update submodules by **git submodule update**
 		- go to output directory **cd build**
 		- generate cmake dependencies **cmake ..**
 		- build all **make**
@@ -51,6 +52,22 @@
 		Inside build directory:
 		- **bin** folder contains all binary outputs
 		- **bin/tests** folder contains all test executables
+
+	5. Checkers
+		Inside build directory:
+
+		* CppCheck:
+		- tun **make cppcheck** command
+
+		* Clang-tidy:
+		- tun **make clang-tidy** command
+
+	6. Formatter
+		Inside build directory:
+
+		* CppCheck:
+		- tun **make clang-format** command		
+
 
 ### Links:
 
