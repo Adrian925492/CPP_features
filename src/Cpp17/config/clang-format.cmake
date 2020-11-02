@@ -13,7 +13,7 @@ file(
                 ${CMAKE_SOURCE_DIR}/Cpp17/source/*.cpp 
                 ${CMAKE_SOURCE_DIR}/Cpp17/source/*.h
                 ${CMAKE_SOURCE_DIR}/Cpp17/tests/*.cpp 
-                ${CMAKE_SOURCE_DIR}/Cpp17/tests/*.h)
+                ${CMAKE_SOURCE_DIR}/Cpp17/tests/*.h
 )
 
 message(STATUS "ClangTidy enabled")
