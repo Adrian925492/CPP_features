@@ -12,6 +12,9 @@ include(CTest)
 # Include config for Cpp11
 include(config/config.cmake)
 
+# Include cppcheck
+include(config/cppcheck.cmake)
+
 # Add source subdir
 add_subdirectory(source)
 
