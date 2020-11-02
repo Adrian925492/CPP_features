@@ -15,6 +15,12 @@ include(config/config.cmake)
 # Include cppcheck
 include(config/cppcheck.cmake)
 
+# Include cppcheck
+include(config/clang-tidy.cmake)
+
+# Include cppcheck
+include(config/clang-format.cmake)
+
 # Add source subdir
 add_subdirectory(source)
 
