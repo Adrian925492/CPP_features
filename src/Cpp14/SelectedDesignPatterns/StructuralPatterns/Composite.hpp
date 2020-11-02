@@ -17,7 +17,7 @@ struct compositeProduct
 {
 	virtual void add(compositeProduct* product){};
 	virtual void remove(compositeProduct* product){};
-	virtual compositeProduct* get(int product){};
+	virtual compositeProduct* get(int product){return nullptr;};
 	virtual void foo()=0;
 	virtual ~compositeProduct(){}
 };

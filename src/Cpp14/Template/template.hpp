@@ -41,7 +41,7 @@ struct Silnia
     enum { wartosc = N * Silnia<N-1>::wartosc };
 };
 
-template <>             //specjalizacja koñczy rekurencjê
+template <>             //specjalizacja koï¿½czy rekurencjï¿½
 struct Silnia<0>
 {
     enum { wartosc = 1 };
@@ -94,7 +94,7 @@ void templateTest()
 	variadicTemplate(1, 2, "Hello");
 
 	Aint a2;	//Alias do szablonu
-	Aint_t a3;	//Lub za pomoc¹ typedef
+	Aint_t a3;	//Lub za pomocï¿½ typedef
 
 }
 

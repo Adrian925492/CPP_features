@@ -2,7 +2,7 @@
 
 ## Contents
 
-1. Basic examples of Cpp features (up to Cpp11)
+1. Basic examples of Cpp features (up to Cpp14)
 	-> Casting
 	-> Constructors
 	-> Dynamic memory allocation

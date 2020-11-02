@@ -9,9 +9,9 @@
 #define INTELIGENTPOINTERS_INTELIGENTPOINTERS_HPP_
 
 #include <iostream>
+#include <memory>
 using namespace std;
 
-#include <memory>
 
 void uniquePtrTest(void);
 void sharedPtrTest(void);
@@ -29,8 +29,8 @@ void InteligentPointersTest()
 void uniquePtrTest(void)
 {
 	cout << "Unique ptr test" << endl;
-	unique_ptr<int> p(new int);						//Tworzenie wskaŸnika - poprzez konstruktor
-	unique_ptr<int> pp = make_unique<int>(5);		//Tworzenie wskaŸnika - poprzez make unique
+	unique_ptr<int> p(new int);						//Tworzenie wskaï¿½nika - poprzez konstruktor
+	unique_ptr<int> pp = make_unique<int>(5);		//Tworzenie wskaï¿½nika - poprzez make unique (C++14)
 	*p = 6;
 	cout << "Value: " << *p << endl;
 	*p = 10;
@@ -41,9 +41,9 @@ void uniquePtrTest(void)
 void sharedPtrTest(void)
 {
 	cout << "Shared ptr test" << endl;
-	shared_ptr<int> p(new int);						//Tworzenie wskaŸnika - poprzez konstruktor
+	shared_ptr<int> p(new int);						//Tworzenie wskaï¿½nika - poprzez konstruktor
 	int w;
-	shared_ptr<int> pp = make_shared<int>(w);		//Tworzenie wskaŸnika - poprzez make shared
+	shared_ptr<int> pp = make_shared<int>(w);		//Tworzenie wskaï¿½nika - poprzez make shared (C++14)
 	*p = 6;
 	cout << "Value: " << *p << endl;
 	*p = 10;

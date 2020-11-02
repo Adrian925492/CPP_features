@@ -25,7 +25,6 @@ public:
 	{
 		std::cout << "User defined copy assignment operator called !" << std::endl;
 		_param1 = oClass._param1;
-		delete _param2;					//Delete old data
 		_param2 = new int;				//Allocate place for new data
 		*_param2 = *(oClass._param2);	//Copy data
 		return *this;
@@ -48,6 +47,8 @@ public:
 
 		oClass._param1 = 0;			//Free content of old class
 		oClass._param2 = nullptr;
+
+		return *this;
 	}
 
 	~classConstrA()
@@ -101,10 +102,10 @@ void constructorsTest()
 	std::cout << "	copy of oA4" << std::endl;
 	classConstrA oA5(oA4);		//Copy of oA1 by copy constructor;
 
-	std::cout << "	assignment of oA4)" << std::endl;
+	std::cout << "	assignment of oA4" << std::endl;
 	classConstrA oA6 = oA4;		//Default (implicit) copy assignment operator called;
 
-	std::cout << "	assignment of oA4 - explicitly" << std::endl;
+	std::cout << "	assignment of oA6 - explicitly" << std::endl;
 	classConstrA oA7;
 	oA7 = oA6;					//User defined copy assignment operator called
 
