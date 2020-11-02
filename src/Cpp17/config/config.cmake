@@ -21,7 +21,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # Compiler setting
-set (CMAKE_CXX_STANDARD 14)
+set (CMAKE_CXX_STANDARD 17)
 
 # Turn on error when compiler standard not satisfied
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -31,14 +31,14 @@ set (CMAKE_CXX_EXTENSIONS OFF)
 
 # Add INTERFACE type library - will not produce artofacts, used only to propagate properties set 
 # for the libarry with INTERFACE prefixes
-add_library(cpp14_config INTERFACE)
+add_library(cpp17_config INTERFACE)
 
 # Set compiler settings - standard in that case
-target_compile_features(cpp14_config INTERFACE
-    cxx_std_14
+target_compile_features(cpp17_config INTERFACE
+    cxx_std_17
 )
 
 # Set compiler flags
-target_compile_options(cpp14_config INTERFACE
+target_compile_options(cpp17_config INTERFACE
     -pthread
 )
