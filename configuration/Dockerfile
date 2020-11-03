@@ -23,7 +23,8 @@ FROM base_tools as dev_tools
 FROM dev_tools as checkers_tools
 	RUN apt-get update && \
 		apt-get install -y cppcheck && \
-		apt-get install -y clang-tidy
+		apt-get install -y clang-tidy && \
+		apt-get install -y clang-format
 
 # Python tools
 FROM checkers_tools as python_tools
