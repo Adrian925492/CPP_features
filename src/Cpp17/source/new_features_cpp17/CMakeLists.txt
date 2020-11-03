@@ -3,19 +3,3 @@
 # It is good practice to keep it in all CMakeLists.txt files in the structure
 cmake_minimum_required(VERSION 3.14)
 
-add_subdirectory(new_features_cpp17)
-
-# Define project name
-project(Cpp17 VERSION 1.0.0)
-
-# Add executable
-add_executable(Cpp17 
-    main.cpp
-)
-
-# Link config library
-target_link_libraries(
-    Cpp17
-    PRIVATE
-        cpp17_config
-)
