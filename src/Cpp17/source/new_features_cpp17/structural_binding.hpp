@@ -86,7 +86,5 @@ void structural_binding_example()
     cout << "Division 16/6 gives: " << fraction << " and rest of " << remainder << "\n";   
     cout << "Name is: " << name << " and age is: " << age << "\n";  
     cout << "Employee name is: " << e_name << " age is: " << e_age << " and salary is: " << e_salary << "\n"; 
-
-
 }
 
