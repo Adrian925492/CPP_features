@@ -3,6 +3,8 @@
 #include "new_features_cpp17/way_of_initialization.hpp"
 #include "new_features_cpp17/automatic_template.hpp"
 #include "new_features_cpp17/constexpr-if.hpp"
+#include "new_features_cpp17/inline_static_class.hpp"
+#include "new_features_cpp17/folding.hpp"
 
 int main(void)
 {
@@ -11,4 +13,10 @@ int main(void)
     way_of_initialization_example();
     automatic_template_types_deduction_example();
     constexpr_if_example();
+
+    // Inline static class example
+    cout << "Inline static class example \n\n";
+    cout << "using inline header-only class property: value: " << oInlineClass.variable << endl;
+
+    fold_example();
 }
