@@ -74,10 +74,50 @@ void erase_remove_recipie()
         print_vector(v);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 2: Fast remove elemnt
+
+/* Normally removing element from the middle of a vector is costly - beacouse we need to reallocae memory and vector
+    has to copy data. However, if we do not care of the element sorder, we can remove any (one) element 
+    in the middle of vector just by overriding it by last element of the vector and removing last
+    element of a vector, which is much more effective (we just move the end pointer, no need to copy and realocate anythink).
+
+    What can be costly is copying last element of the vector to the plase of removed. If the vector contains 
+    large elements, we can use std::move instead of copy to save some resources.
+
+    EXAMPLE:
+*/
+
+void quick_remove_at(vector<int> &v, vector<int>::iterator it)
+{
+    if (it != end(v))
+    {
+        *it = move(v.back());
+        v.pop_back();
+    }
+}
+
+void quick_erase_example()
+{
+        cout << "Quick erase recepie \n\n";
+        cout << "Vector at the beginning:\n";
+    
+    vector<int> v{1, 2, 3, 2, 5, 2, 7, 8};
+        
+        print_vector(v);
+        cout << "We will erase number 3\n";
+
+    auto it = find(v.begin(), v.end(), 3);
+    quick_remove_at(v, it);
+
+        cout << "After erase elements: \n";
+        print_vector(v);
+}
 
 
 void vector_example()
 {
     cout << "Vector recepies examples!  \n\n";
     erase_remove_recipie();
+    quick_erase_example();
 }
