@@ -6,6 +6,8 @@
 #include "new_features_cpp17/inline_static_class.hpp"
 #include "new_features_cpp17/folding.hpp"
 
+#include "vector/vector.h"
+
 int main(void)
 {
     structural_binding_example();
@@ -19,4 +21,7 @@ int main(void)
     cout << "using inline header-only class property: value: " << oInlineClass.variable << endl;
 
     fold_example();
+
+
+    vector_example();
 }
