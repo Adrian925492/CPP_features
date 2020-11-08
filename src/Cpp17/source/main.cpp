@@ -7,6 +7,7 @@
 #include "new_features_cpp17/folding.hpp"
 
 #include "vector/vector.h"
+#include "map/map.h"
 
 int main(void)
 {
@@ -22,6 +23,7 @@ int main(void)
 
     fold_example();
 
-
     vector_example();
+
+    map_example();
 }

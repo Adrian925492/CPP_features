@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cassert>
 #include "vector.h"
 
 using namespace std;
@@ -114,10 +115,97 @@ void quick_erase_example()
         print_vector(v);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 3: Safe access to vector element
+/* Vectors provides 2 methods of accesing its elements - by [] operator, and by at() method.
+
+The methods are similar, bu not the same.
+
+at() method access the element, but also raises exception if the element is over
+vector size. [] does only returns elemens, so it might be like we access element over vector size.
+
+We can use that feature to pretend of accesing wrong element from vector.
+
+It is good practice to use at() instead of []
+
+*/
+void vector_access()
+{
+        cout << "Quick erase recepie \n\n";
+        cout << "Vector at the beginning:\n";
+    
+    vector<int> v{1, 2, 3, 2, 5, 2, 7, 8};
+        
+        print_vector(v);
+        cout << "We will access index over vector size by [] 3\n";
+
+    auto el1 = v[10];
+        cout << "Element " << el1 << endl;
+
+        cout << "Now we will access it by at(). We expect an exception. \n";
+
+    try{
+        auto el2 = v.at(11);
+    } catch (const std::out_of_range &e)
+    {
+        cout << "Exception catched! \n";
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 4: Insert element to sorted vector to still have sorted vector
+
+/* Vectors are not the best optimize according to sort elements. However, vectors handle
+std::sort method. Sometimes we have sorted vector in which we want to push some elements in a way, that 
+final vector will still be sorted. 
+
+We could do it adding element to vector and sort it again, but that would be ineffective.
+
+We can also use lower_bound(begin, end, element) method. The method will return iterator
+for element of container that is maximum, still lower than the element.
+
+Basing on that we can use insert() method to add new element in proper place and still obtain
+sorted vector.
+
+is_sorted() method return true if the vector had been sorted before (used sort() method on it)
+*/
+void insert_sorted(vector<int>& v, int element)
+{
+    // Vector v has to be sorted!
+    const auto position = lower_bound(v.begin(), v.end(), element);
+    v.insert(position, element);
+}
+
+void insert_sorted_example()
+{
+        cout << "Insert sorted example! \n\n";
+        cout << "Vector at the beginning:\n";
+    
+    vector<int> v{1, 2, 3, 2, 5, 2, 7, 8};
+
+        print_vector(v);
+        cout << "We will sort the vector\n";
+
+    sort(begin(v), end(v));
+
+        print_vector(v);
+        cout << "We will insert value of 4\n";
+
+    assert(true == is_sorted(v.begin(), v.end()));
+    insert_sorted(v, 4);
+
+        print_vector(v);
+}
+
+
+
+
 
 void vector_example()
 {
     cout << "Vector recepies examples!  \n\n";
     erase_remove_recipie();
     quick_erase_example();
+    vector_access();
+    insert_sorted_example();
 }

@@ -3,23 +3,11 @@
 # It is good practice to keep it in all CMakeLists.txt files in the structure
 cmake_minimum_required(VERSION 3.14)
 
-add_subdirectory(new_features_cpp17)
-add_subdirectory(vector)
-add_subdirectory(map)
-
-# Define project name
-project(Cpp17 VERSION 1.0.0)
-
-# Add executable
-add_executable(Cpp17 
-    main.cpp
-)
+add_library(map_recepies STATIC map.cpp map.h)
 
 # Link config library
 target_link_libraries(
-    Cpp17
+    map_recepies
     PRIVATE
         cpp17_config
-        vetor_recepies
-        map_recepies
 )
