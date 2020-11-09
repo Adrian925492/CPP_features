@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <map>
+#include <vector>
 #include <utility>
 #include <algorithm>
 #include <cassert>
@@ -91,10 +92,92 @@ void insert_with_tip()
         print_map(mapa);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 3: Exctract map node
+
+/* In older standards, to get map node, we could for example access it by iterator. To
+get extracted vesrion of a node, we had to copy the node pointed by iterator, and than erase node from
+the map. 
+
+From cpp17 we have new method that allows to do it in more effective way - extract(). No copy and erase will be
+done here, the method just unlinks the node from a map, links neighbour nodes together if needed, and
+makes rebalancing of the map if needed. The method has 2 variants - with iterator argument, returns node handler, and
+is faster, beacouse does not need to look for a node by key, and other one, that accepts a key. The method looks map
+for finding a key, and if it is present, it returns node of the element. If key is not present, it will return empty
+node.
+
+We can check if node is empty by .empty() method call (true = empty)
+
+With such extracted node we can do something, like swapping, modyfying etc.
+
+Next we can insert such modified node to any map by insert() method.
+
+Example usage:
+
+*/
+
+void extract_node_example()
+{
+        cout << "Extract node example! \n\n";
+        cout << "Map at the begining: ";
+
+    map<int, int> mapa{make_pair(1,1), make_pair(2,2)};
+
+        print_map(mapa);
+
+        cout << "Extract element by key 2:\n";
+
+    auto node = mapa.extract(2);
+
+        cout << "Map after extract: ";
+        print_map(mapa);    
+
+        cout << "Extracted element: key: " << node.key() << endl;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 4: Using map to count occurence of elements in series
+
+/* Sometimes we want to count number of occurences of some elements in a series
+in a good way. Here we have example of how to du it by map.
+
+1. Create empty map - key will be series element, and value will be occurence counter
+2. For each element, increment value and if key does not exists, add key
+
+Example:
+*/
+
+void occurence_counter_example()
+{
+        cout << "Occurence counter example \n\n";
+        cout << "We will count occurences of separate letters in the following list: {";
+    vector<int> input{1, 2, 3, 4, 5, 6, 6, 3, 4, 2, 6, 1};
+        for_each(input.begin(), input.end(), [](auto& it){cout << " " << it << ",";});
+        cout << "}" << endl << endl;
+
+    map<int, int> counter;
+    for_each(input.begin(), input.end(), [&counter](auto it){
+        counter[it]++;
+    });
+
+        cout << "Map after counting (unordered): \n";
+        print_map(counter);
+
+    vector<pair<int, int>> ordered_count;
+    ordered_count.reserve(counter.size());
+    move(counter.begin(), counter.end(), back_inserter(ordered_count));
+    sort(ordered_count.begin(), ordered_count.end(), [](auto& a, auto&b){return a.second > b.second;});
+        cout << "Sorted counter: { ";
+        for_each(ordered_count.begin(), ordered_count.end(), [](auto& it){cout << " " << it.first << " : " << it.second << ",";});
+        cout << "}\n\n";
+}
+
 
 void map_example()
 {
     cout << "Map recepies examples!  \n\n";
     add_to_map_recipie();   
     insert_with_tip();
+    extract_node_example();
+    occurence_counter_example();
 }
