@@ -8,6 +8,7 @@
 
 #include "vector/vector.h"
 #include "map/map.h"
+#include "unordered_map/unordered_map.h"
 
 int main(void)
 {
@@ -26,4 +27,6 @@ int main(void)
     vector_example();
 
     map_example();
+
+    unordered_map_example();
 }

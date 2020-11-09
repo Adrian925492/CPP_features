@@ -10,7 +10,7 @@
 
 using namespace std;
 
-void print_map(const map<int, int>& m)
+static void print_map(const map<int, int>& m)
 {
     cout << "Map elements: { ";
     for_each(m.begin(), m.end(), [](auto it){cout << it.first << " : " << it.second << ", ";});
@@ -167,6 +167,7 @@ void occurence_counter_example()
     ordered_count.reserve(counter.size());
     move(counter.begin(), counter.end(), back_inserter(ordered_count));
     sort(ordered_count.begin(), ordered_count.end(), [](auto& a, auto&b){return a.second > b.second;});
+
         cout << "Sorted counter: { ";
         for_each(ordered_count.begin(), ordered_count.end(), [](auto& it){cout << " " << it.first << " : " << it.second << ",";});
         cout << "}\n\n";
