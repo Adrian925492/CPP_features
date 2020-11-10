@@ -9,6 +9,7 @@
 #include "vector/vector.h"
 #include "map/map.h"
 #include "unordered_map/unordered_map.h"
+#include "stack/stack.h"
 
 int main(void)
 {
@@ -29,4 +30,6 @@ int main(void)
     map_example();
 
     unordered_map_example();
+
+    stack_example();
 }
