@@ -8,6 +8,9 @@ add_subdirectory(vector)
 add_subdirectory(map)
 add_subdirectory(unordered_map)
 add_subdirectory(stack)
+add_subdirectory(set)
+add_subdirectory(multimap)
+add_subdirectory(queue)
 
 # Define project name
 project(Cpp17 VERSION 1.0.0)
@@ -26,4 +29,7 @@ target_link_libraries(
         map_recepies
         unordered_map_recepies
         stack_recepies
+        set_recepies
+        multimap_recepies
+        queue_recepies
 )

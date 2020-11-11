@@ -10,6 +10,9 @@
 #include "map/map.h"
 #include "unordered_map/unordered_map.h"
 #include "stack/stack.h"
+#include "set/set.h"
+#include "multimap/multimap.h"
+#include "queue/queue.h"
 
 int main(void)
 {
@@ -32,4 +35,10 @@ int main(void)
     unordered_map_example();
 
     stack_example();
+
+    set_example();
+
+    multimap_example();
+
+    queue_example();
 }
