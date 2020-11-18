@@ -13,6 +13,7 @@
 #include "set/set.h"
 #include "multimap/multimap.h"
 #include "queue/queue.h"
+#include "iterators/iterators.h"
 
 int main(void)
 {
@@ -41,4 +42,6 @@ int main(void)
     multimap_example();
 
     queue_example();
+
+    iterators_example();
 }
