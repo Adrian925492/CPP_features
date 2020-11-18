@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <string>
 #include <vector>
+#include <list>
 #include <iterator>
 #include "iterators.h"
 
@@ -247,6 +248,33 @@ void iterator_for_algorithm_example()
     cout << "}\n\n";
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 5: Reverse iterator
+
+/* Reverse iterators are in fact standard iterators decorated with algorithm that converts
+incrementation to decrementation. That allows to use containers with algorithms naturally
+working only in forward way to work with opposite way - iterate from end to beginning.
+
+Reverse iterator can be applied only on containers that allows to iterate back (decrement iterator).
+
+STL containers has already methods that returns reverse iterators: rend() and rbegin().
+If we have container that does not provides rbegin and rend, we can use make_reverse_iterator() function,
+that converts standard iterator to reverse one. The container has to be able to iterate backward.
+
+Example:
+*/
+
+void reverse_iterator_example()
+{
+    cout << "Reverse iteration example \n\n";
+    cout << "We have a list: {1, 2, 3, 4, 5}. Reverse list is: \n";
+    list<int>  l{1, 2, 3, 4, 5};
+
+    copy(l.rbegin(), l.rend(), ostream_iterator<int>{cout, ", "});
+
+    cout << "\n\n";
+}
+
 void iterators_example()
 {
     cout << "Iterators examples! " << endl << endl;
@@ -258,4 +286,6 @@ void iterators_example()
     iterator_adapters_example();
 
     iterator_for_algorithm_example();
+
+    reverse_iterator_example();
 }
