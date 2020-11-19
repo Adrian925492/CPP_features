@@ -275,6 +275,79 @@ void reverse_iterator_example()
     cout << "\n\n";
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 6: Using iterator guard
+
+/* Iterator guard is an empty object, which fits to iterator interface, but has different type
+than standard iterator. In cpp17 we can have different types for begin and end iterators when
+iterating by loop. Although, we can use different type for begin and end iterator of a range.
+
+It is usable if we want to iterate threw range, in which we do not know end iterator placement
+before we get to it, and we do not want to iterate threw whole range to find it before
+we start loop iteration. Example of such situation can be iterating threw stream.
+
+If we have guard iterator which has different type than standard iterator, we can overload != operator of standard iterator
+to check if we reached end of range (ex. for c-style char chain we can check if char is '\0')
+
+The compiler will automatiaclly chose right != operator for us to compare iterator with guard.
+
+The iterated range has to return standard iterator in begin(), and guard iterator type in end().
+
+Example */
+
+// Iterator guard type
+class it_guard {};
+
+// Standard iterator
+class it{
+    const char *s {nullptr}; //The iterator will iterate threw c-style char chain
+public:
+    explicit it(const char *str) : s(str) {}
+    char operator* () const 
+    {
+        return *s;
+    }
+    it& operator++()
+    {
+        ++s;
+        return *this;
+    }
+    bool operator!= (const it_guard) const
+    {
+        return s != nullptr && *s != '\0';
+    }
+};
+
+//Range to iteration definition
+class cstring_range{
+    const char *s {nullptr};
+    public:
+    cstring_range(const char* str) : s(str) {}
+    it begin() const
+    {
+        return it{s};
+    }
+    it_guard end() const
+    {
+        return {};
+    }
+};
+
+// And example function
+void iterator_guardian_example()
+{
+    cout << "Iterator guardian example \n\n";
+    cout << "We will iterate c-style string: a, d, b, v, c: \n\n";
+
+    cstring_range c{"adbvc"};
+
+    for (char x : c)
+    {
+        cout << x << ", ";
+    }
+    cout << "\n\n";
+}
+
 void iterators_example()
 {
     cout << "Iterators examples! " << endl << endl;
@@ -288,4 +361,6 @@ void iterators_example()
     iterator_for_algorithm_example();
 
     reverse_iterator_example();
+
+    iterator_guardian_example();
 }
