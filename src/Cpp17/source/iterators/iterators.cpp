@@ -348,6 +348,29 @@ void iterator_guardian_example()
     cout << "\n\n";
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 7: Automatic check of iterator code
+
+/* Iterators acts like standard pointers. That means, the iterators can be affected by some 
+errors hard to discover, like dereference to point out of range.
+
+In the recepie we will cause such mistake and check if compiler will be able to find it out.
+
+Example:
+*/
+
+void iterator_error_example()
+{
+    cout << "Iterator mistake example. Dereference element of vector by iterator: ";
+    vector<int> v{1,2,3};
+    v.shrink_to_fit();
+    const auto it = v.begin();
+    cout << *it << "\n";
+    cout << "And now dereference iterator that points wrongly. Vector has been moved. *it = ";
+    v.push_back(8); //As 4th element cannot be fitted to 3-element memory slot, the vector will be moved to new memory slot
+    cout << *it << endl << endl;
+}
+
 void iterators_example()
 {
     cout << "Iterators examples! " << endl << endl;
@@ -363,4 +386,6 @@ void iterators_example()
     reverse_iterator_example();
 
     iterator_guardian_example();
+
+    iterator_error_example();
 }

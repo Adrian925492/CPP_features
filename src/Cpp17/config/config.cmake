@@ -29,6 +29,9 @@ set (CMAKE_CXX_STANDARD_REQUIRED ON)
 # Disable compile standard-specific extensions
 set (CMAKE_CXX_EXTENSIONS OFF)
 
+# Sanitizers flag for GCC
+# set(CMAKE_CXX_FLAGS -D_GLIBCXX_DEBUG)
+
 # Add INTERFACE type library - will not produce artofacts, used only to propagate properties set 
 # for the libarry with INTERFACE prefixes
 add_library(cpp17_config INTERFACE)
