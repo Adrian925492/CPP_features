@@ -14,6 +14,7 @@
 #include "multimap/multimap.h"
 #include "queue/queue.h"
 #include "iterators/iterators.h"
+#include "lambda/lambda.h"
 
 int main(void)
 {
@@ -44,4 +45,6 @@ int main(void)
     queue_example();
 
     iterators_example();
+
+    lambda_example();
 }

@@ -12,6 +12,7 @@ add_subdirectory(set)
 add_subdirectory(multimap)
 add_subdirectory(queue)
 add_subdirectory(iterators)
+add_subdirectory(lambda)
 
 # Define project name
 project(Cpp17 VERSION 1.0.0)
@@ -34,4 +35,5 @@ target_link_libraries(
         multimap_recepies
         queue_recepies
         iterators_recepies
+        lambda_recepies
 )

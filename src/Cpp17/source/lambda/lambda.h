@@ -1,0 +1,1 @@
+void lambda_example();
