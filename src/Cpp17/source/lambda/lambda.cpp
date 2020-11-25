@@ -180,6 +180,37 @@ void combined_predictate_example()
     cout << endl << endl;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 5: Using lambda to create package of functions
+
+/* The recepie allows us to create function that will pack for us many other functions
+and call it one by one. Such packaged function can be than called many times, reducing
+number of repetitions in the code.
+
+*/
+
+static auto multicall (auto ... functions)
+{
+    return [=](auto x){
+        (void)(initializer_list<int>{ ((void)functions(x), 0)...});     //Cast to void forces ignore retval
+    };
+}
+
+void pack_example()
+{
+    cout << "Function pack example\n\n";
+    auto f1 = [](int x){cout << " Fcn1 " << x;};
+    auto f2 = [](int x){cout << " Fcn2 " << x;};
+    auto f3 = [](int x){cout << " Fcn3 " << x;};
+
+    auto mcf = multicall(f1, f2, f3);       // Create multicall function
+
+    cout << "Multicall fcn: ";
+    mcf(1);
+
+    cout << endl << endl;
+}
+
 void lambda_example()
 {
     cout << "Lambda example! \n\n";
@@ -191,6 +222,8 @@ void lambda_example()
     concat_example();
 
     combined_predictate_example();
+
+    pack_example();
 }
 
 // auto haming = Hamming(1, 1.2, ...)
