@@ -3,6 +3,8 @@
 #include <iostream>
 #include <vector>
 #include <functional>
+#include <numeric>
+#include <iterator>
 
 using namespace std;
 
@@ -211,6 +213,90 @@ void pack_example()
     cout << endl << endl;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 6: Creating transform_if function
+
+/* Transform_if is a mix of std::transform, which transforms
+all emements from input range using transform function, and if clause, which will add
+predictate to transform function, that will decide if the element will be transformed or not.
+
+Example:
+*/
+
+//Step 1: define mapping function
+template <typename T>
+auto map(T fn)
+{
+    return [=](auto reduce_fn){     // The mapping function returns functor that accepts reduce function
+        return [=](auto accum, auto input){     // Which returns functor in general form
+            return reduce_fn(accum, fn(input));     //Which in its implementation calls transform_fn and returns its output
+        };
+    };
+}
+
+
+// Step 2: define filter function to handle predictate. The function will filter out all 
+//      elements not fit to the predictate, and if fits it will call reduce_fn on it.
+template <typename T>
+auto filter(T predictate)
+{
+    return [=](auto reduce_fn){     //The filter function will return functor, which accepts reduce function
+        return [=](auto accum, auto input)      // And in its implementation returns function which checks predictate
+        {
+            if (predictate(input)){
+                return reduce_fn(accum, input);     // And calls reduce fn if predictate is true
+            }else{
+                return accum;                       // Or returns unmodified value
+            }
+        };
+    };
+}
+
+// Step 3: define helper function - that will copy and move iterator
+auto copy_and_advance = [](auto it, auto input){
+    *it = input;
+    return ++it;
+};
+
+void transform_if_example()
+{
+    cout << "Transform if example! \n\n";
+
+    auto pred_even = [](int i){return i%2;};    //Define predictate
+    auto accum_twice = [](int i){return i*2;};  //Define transformfunction
+
+    vector<int> v{1,2,3,4,5};                   //Define input data
+
+    cout << "The transform_if will take elements from vector v: {1,2,3,4,5}, and for each even element will return its multiplication to stdout. \n Result:\n";
+
+    std::accumulate(
+        v.begin(),
+        v.end(),
+        std::ostream_iterator<int>{std::cout, ", "},
+        filter(pred_even)(
+            map(accum_twice)(
+                copy_and_advance
+            )
+        )
+    );
+
+    // Here we just rely on thick, that both map, filter and reduce_fcn returns functor that has the same signature - fitting to std::accumulate.
+    // We can forex. use just copy_and_advance
+
+    // If we type: filter(pred)(a), in fact the filter will return lambda accepting reduce_fn, but 2nd () will call it in place.
+    // Such call will return lambda which signature fits to copy_and_replace. The "a" is here hext function to do, and we can create such chain in that way.
+    cout << "Just copy_and_advance usage example\n:"
+    std::accumulate(
+        v.begin(),
+        v.end(),
+        std::ostream_iterator<int>{std::cout, ", "},
+        copy_and_advance
+    );
+
+
+    cout << endl << endl;
+}
+
 void lambda_example()
 {
     cout << "Lambda example! \n\n";
@@ -224,6 +310,8 @@ void lambda_example()
     combined_predictate_example();
 
     pack_example();
+
+    transform_if_example();
 }
 
 // auto haming = Hamming(1, 1.2, ...)
