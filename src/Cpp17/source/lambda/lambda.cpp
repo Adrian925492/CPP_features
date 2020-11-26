@@ -285,7 +285,7 @@ void transform_if_example()
 
     // If we type: filter(pred)(a), in fact the filter will return lambda accepting reduce_fn, but 2nd () will call it in place.
     // Such call will return lambda which signature fits to copy_and_replace. The "a" is here hext function to do, and we can create such chain in that way.
-    cout << "Just copy_and_advance usage example\n:"
+    cout << "Just copy_and_advance usage example\n:";
     std::accumulate(
         v.begin(),
         v.end(),
@@ -295,6 +295,47 @@ void transform_if_example()
 
 
     cout << endl << endl;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 7: Constexpr cartesian product example using lambda
+
+/* In that recepie we will use lambda and variadic nr of arguments to generate
+    well optimized, working on compile time cartesian product calculator.
+
+    Example
+    */
+
+//Helper function - to print element
+static void print_el(int x, int y)
+{
+    cout << "{ " << x << ", " << y << "}\n";
+}
+
+void cartesian_product_example()
+{
+    cout << "Cartesian product example of {1, 2, 3} and {1, 2, 3}\n\n";
+
+    constexpr auto call_cart = [=](auto f, auto x, auto ...rest) constexpr  //Calculates single cartesian pair
+    {
+        (void)std::initializer_list<int>{       // Where x is multiplier, and xs is 2nd list, like {x, a}, {x, b}  ...
+            (((x < rest)    // rest is actual variable of a list, untill end. That x< rest filters out all duplicates, like if we cart(1, 2), we would get x=1: {1,1} (filtered out) and {1,2} filtered out; x=2: {2,1} (pass) and {2,2} filtered out.
+                ? (void)f(x, rest)  // Calls given function f on the product: given x and actual rest arg.
+                : (void)0)
+            ,0)...
+        };
+    };
+
+    constexpr auto cartesian = [=](auto ...xs){ //Creates castesian expressions like for cart(1,2, 3)) will create call_cart(1, 1, 2, 3), call_cart(2, 1,2,3) and call_cart(3, 1,2,3)
+        return [=](auto f) constexpr {
+            (void)std::initializer_list<int>{   //Initializer list - only to expand ... for function call.
+                ((void)call_cart(f, xs, xs...), 0)...
+            };
+        };
+    };
+
+    constexpr auto print_cart(cartesian(1,2,3));        // Has to be defined as variable - it is done in compile time
+    print_cart(print_el);      //In runtime we use only this!
 }
 
 void lambda_example()
@@ -312,6 +353,8 @@ void lambda_example()
     pack_example();
 
     transform_if_example();
+
+    cartesian_product_example();
 }
 
 // auto haming = Hamming(1, 1.2, ...)
