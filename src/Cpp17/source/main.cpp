@@ -15,6 +15,7 @@
 #include "queue/queue.h"
 #include "iterators/iterators.h"
 #include "lambda/lambda.h"
+#include "algorithms/algorithms.h"
 
 int main(void)
 {
@@ -47,4 +48,6 @@ int main(void)
     iterators_example();
 
     lambda_example();
+
+    algorithms_example();
 }
