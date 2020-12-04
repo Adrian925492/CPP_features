@@ -9,6 +9,7 @@
 #include <iterator>
 #include <map>
 #include <random>
+#include <iomanip>
 
 using namespace std;
 
@@ -381,6 +382,98 @@ void substring_example()
     }
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 8: Large vector sampling
+
+/* Cpp17 provides feature that allows to sample large container in a way tah we get n
+probes from larger container to smaller container. The sampling is jittered by random function given.
+
+Example: 
+*/
+
+void sampling_example()
+{
+    cout << "Sampling example \n\n";
+
+    const size_t data_points {100000};
+    const size_t sample_points {100};   //We want to obtain 100 samples of 10000
+
+    const int mean{10};
+    const size_t dev {3};
+    random_device rd;
+    mt19937 gen {rd()};
+    normal_distribution<> d {mean, dev};    //Produce normal distribution
+
+    vector<int> v;
+    v.reserve(data_points);
+    generate_n(back_inserter(v), data_points, [&](){return d(gen);});   //Produce input vector - 10000 samples with normal distrib
+
+    vector<int> samples;
+    samples.reserve(sample_points);
+
+    sample(v.begin(), v.end(), back_inserter(samples), sample_points, mt19937(random_device{}()));  //Sample random points from large vector
+
+    map<int, size_t> hist;
+    for (int i : samples) {++hist[i];}
+
+    cout << "Sampled distribution: \n";
+    for (const auto &[value, count] : hist)
+    {
+        cout << setw(5) << value << " " << string(count, '*') << endl;      //setw() sets width of a stream (1st space). Here, align is set to 5th char.
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 9: Generating permutations of input data sequencec
+
+/* Cpp17 has function for generating next permutation of input data.
+
+The input data range has to be sorted in rising way.
+
+*/
+
+void permutation_example()
+{
+    cout << "Permutation example \n\n";
+
+    vector<int> v{1,2,3};
+    cout << "Initial vector: ";
+    print(v);
+    cout << "sorted?: " << is_sorted(v.begin(), v.end()) << endl;
+
+    cout << "permutations:";
+
+    do {
+        copy(v.begin(), v.end(), ostream_iterator<int>{cout, ", "});
+        cout << endl;
+    } while (next_permutation(begin(v), end(v)));
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 10: Range merges tool
+
+/* Cpp17 introduced merge method, that allows to merge
+2 sorted containers.
+*/
+
+void merge_example()
+{
+    cout << "Merge example\n\n";
+
+    vector<int> v1{1,3,5};
+    cout << "Initial vector: v1: ";
+    print(v1);
+
+    vector<int> v2{2,4,5};
+    cout << "Initial vector: v2: ";
+    print(v2);
+
+    cout << "Merged vector w: ";
+    merge(v1.begin(), v1.end(), v2.begin(), v2.end(), ostream_iterator<int>{cout, ", "});
+    cout << endl;
+}
+
 void algorithms_example()
 {
     cout << "Algorithms example! \n\n";
@@ -398,4 +491,10 @@ void algorithms_example()
     clamp_example();
 
     substring_example();
+
+    sampling_example();
+
+    permutation_example();
+
+    merge_example();
 }
