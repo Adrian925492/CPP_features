@@ -16,6 +16,7 @@
 #include "iterators/iterators.h"
 #include "lambda/lambda.h"
 #include "algorithms/algorithms.h"
+#include "advanced_algorithms/advanced_algorithms.h"
 
 int main(void)
 {
@@ -50,4 +51,6 @@ int main(void)
     lambda_example();
 
     algorithms_example();
+
+    advanced_algorithms_example();
 }
