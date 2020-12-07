@@ -8,6 +8,7 @@
 #include <numeric>
 #include <vector>
 #include <cmath>
+#include <list>
 #include "advanced_algorithms.h"
 
 using namespace std;
@@ -300,6 +301,8 @@ void mandelbort_example()
 {
     cout << "Manderbolt example\n\n";
 
+    //Scalling section - we will keep results in linear vector, so we need to scale manderbold
+    // space to the vector space
     const size_t w = 100;
     const size_t h = 40;
     auto scale (scaled_cmplx(
@@ -329,6 +332,84 @@ void mandelbort_example()
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 6: Splitting algorithm
+
+/* In the recepie we will create complex algorithm using basic algorithm. The algorithm
+will split input data by given element to output container */
+
+template<typename InIt, typename OutIt, typename T, typename F>
+InIt split(InIt it_begin, InIt it_end, OutIt it_dest, T splitval, F binfunc)
+{
+    while(it_begin != it_end)
+    {
+        auto range_it_end = find(it_begin, it_end, splitval);
+        *it_dest++ = binfunc(it_begin, range_it_end);
+        if (range_it_end == it_end) {return it_end;}
+        it_begin = next(range_it_end);
+    }
+    return it_begin;
+}
+
+void split_example()
+{
+    cout << "Split example\n\n";
+
+    string s{"a-b-c-d-e-f-g-h"};
+    cout << "String will by splitted by - sign. String to split: " << s << endl;
+
+    list<string> l;
+    auto binfunc = [](auto it1, auto it2){return string(it1, it2);};
+    split(s.begin(), s.end(), back_inserter(l), '-', binfunc);
+
+    cout << "Splitted: \n";
+    copy(l.begin(), l.end(), ostream_iterator<string>{cout, ", "});
+    cout << endl;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 7: Geather function example
+
+/* Geather is a function that reorders range to have all pointed elements
+close to pointed position in the range. Example:
+
+*/
+
+template <typename It, typename F>
+pair<It, It> geather(It first, It last, It geather_pos, F predictate)
+{
+    return {
+        stable_partition(first, geather_pos, not_fn(predictate)),
+        stable_partition(geather_pos, last, predictate)
+    };
+}
+
+template<typename It>
+void geather_sort(It first, It last, It geather_pos)
+{
+    using T = typename std::iterator_traits<It>::value_type;
+    stable_sort(first, geather_pos, greater<T>{});
+    stable_sort(geather_pos, last, less<T>{});
+}
+
+
+void geather_example()
+{
+    cout << "Geather example \n\n";
+    string s {"a-a-a-a-a-a-a"};
+    cout << "Input string: " << s << endl;
+    auto middle = (s.begin() + s.size() / 2);
+    auto is_a = [](char c){return c == 'a';};
+    geather(s.begin(), s.end(), middle, is_a);
+    cout << "Geathered string: " << s << endl;
+
+    string s2 {"b-b-b-b-b-b-b"};
+    cout << "Input string: " << s2 << endl;
+    auto middle2 = (s2.begin() + s2.size() / 2);
+    geather_sort(s2.begin(), s2.end(), middle2);
+    cout << "Geathered sort (element is - ) string: " << s2 << endl;
+}
+
 void advanced_algorithms_example()
 {
     cout << "Advanced algorithms\n\n";
@@ -342,4 +423,8 @@ void advanced_algorithms_example()
     vector_error_example();
 
     mandelbort_example();
+
+    split_example();
+
+    geather_example();
 }
