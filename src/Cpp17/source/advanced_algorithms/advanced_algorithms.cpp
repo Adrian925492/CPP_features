@@ -228,7 +228,6 @@ void fourier_example()
 /* In the recepie we will use STL to calculate error between 2 vectors.
 
 The error will be calculated as sum od square differences of each vector element.
-
 */
 
 void vector_error_example()
@@ -372,7 +371,6 @@ void split_example()
 
 /* Geather is a function that reorders range to have all pointed elements
 close to pointed position in the range. Example:
-
 */
 
 template <typename It, typename F>
@@ -392,7 +390,6 @@ void geather_sort(It first, It last, It geather_pos)
     stable_sort(geather_pos, last, less<T>{});
 }
 
-
 void geather_example()
 {
     cout << "Geather example \n\n";
@@ -408,6 +405,86 @@ void geather_example()
     auto middle2 = (s2.begin() + s2.size() / 2);
     geather_sort(s2.begin(), s2.end(), middle2);
     cout << "Geathered sort (element is - ) string: " << s2 << endl;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 8: White sign remove example:
+
+/*
+In the recepie we will use unique algorithm with predictate for removing not needed white spaces from text.
+*/
+
+template <typename It>
+It remove_white_spaces(It begin, It end)
+{
+    return unique(begin, end, [](const auto &a, const auto &b){
+        return isspace(a) && isspace(b);
+    });
+}
+
+void white_sign_remove_example()
+{
+    cout << "White signs remove example\n\n";
+    string s{"Ala   ma        kota"};
+    cout << "Input string: " << s << endl;
+    auto it = remove_white_spaces(s.begin(), s.end());
+    s.erase(it, s.end());
+    cout << "String with removed not needed whitespaces: " << s << endl;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 9: Compress and decompress 
+
+/*
+In the recepie we will implement algorithm for compressing strings like in example:
+
+aaabbc -> 3a2b1c
+*/
+
+//The method will return counting of occurences of sign given by it
+template<typename It>
+tuple<It, char, size_t> occurences(It it, It end_it)
+{
+    if (it == end_it) { return {it, '?', 0};}
+    const char c {*it};
+    const auto diff (find_if(it, end_it, [c](char x) {return c != x;}));
+    return {diff, c, distance(it, diff)};
+}
+
+//Compress function
+string compress(const string &s)
+{
+    const auto end_it (s.end());
+    stringstream r;
+
+    for (auto it (s.begin()); it != end_it;)
+    {
+        const auto [next_diff, c, n] (occurences(it, end_it));  //Count the occurances of ranges
+        r << c << n;    //Put char and its counter to string
+        it = next_diff; //Move iterator
+    }
+    return r.str();
+}
+
+//Decompress function
+string decompress(const string &s)
+{
+    stringstream ss{s};
+    stringstream r;
+    char c;
+    size_t n;
+    while (ss >> c >> n) {r << string(n, c); }  //For each element in ss make string on n elements of char c and put to stream
+    return r.str(); //String the stream
+}
+
+void compress_example()
+{
+    cout << "Compress example \n\n";
+    string s {"aaaaaaaaaaaaaaaaabbbbbbbbbbbbbb"};
+    cout << "Input string to compress: " << s << endl;
+
+    cout << "Compressed string: " << compress(s) << endl;
+    cout << "Decompressed string: " << decompress(compress(s)) << endl;
 }
 
 void advanced_algorithms_example()
@@ -427,4 +504,8 @@ void advanced_algorithms_example()
     split_example();
 
     geather_example();
+
+    white_sign_remove_example();
+
+    compress_example();
 }
