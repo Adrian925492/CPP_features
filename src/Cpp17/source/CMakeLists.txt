@@ -15,6 +15,7 @@ add_subdirectory(iterators)
 add_subdirectory(lambda)
 add_subdirectory(algorithms)
 add_subdirectory(advanced_algorithms)
+add_subdirectory(strings)
 
 # Define project name
 project(Cpp17 VERSION 1.0.0)
@@ -40,4 +41,5 @@ target_link_libraries(
         lambda_recepies
         algorithm_recepies
         advanced_algorithm_recepies
+        string_recepies
 )

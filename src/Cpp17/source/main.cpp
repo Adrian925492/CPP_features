@@ -17,6 +17,7 @@
 #include "lambda/lambda.h"
 #include "algorithms/algorithms.h"
 #include "advanced_algorithms/advanced_algorithms.h"
+#include "strings/strings.h"
 
 int main(void)
 {
@@ -53,4 +54,6 @@ int main(void)
     algorithms_example();
 
     advanced_algorithms_example();
+
+    strings_example();
 }
