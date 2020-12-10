@@ -62,7 +62,7 @@ void white_letters_remove_example()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-// RECEPIE 2: White signs remover - string view
+// RECEPIE 3: White signs remover - string view
 
 /* String view class - provides string interface without need of keeping copy
 of string inside string object. String view keeps only reference to c-style string chain. It can be 
@@ -93,6 +93,37 @@ void white_letters_remove_example_SV()
     cout << "After remove: {" << s2 << "}\n";
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 4: String cin example
+
+/* In the recepie we will show cin usage example and error handling */
+
+void cin_example()
+{
+    cout << "Cin example\n";
+    cout << "Type 2 numbers: int and double: ";
+    int x;
+    double y;
+    if(cin >> x >> y)   // Cast cin to bool will return true if last operation succeed
+    {
+        cout << "Fine. Your numbers are: int: " << x << " and y: " << y << endl;
+    }else{
+        cout << "You have typed wrong data! " << endl;
+        cin.clear();    // Will reset error state of cin
+        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  //Will clear cin buffer untill last '\n' sign.
+    }
+
+    cout << "Type name and surname: ";
+    string name;
+    getline(cin >> ws, name, ',');  //Getline will set up separator, and cin >> ws will remove spaces around name and surname
+    if (name.empty())
+    {
+        cout << "You typed wrong name and surname data! ";
+    }else{
+        cout << "Name and surname: " << name << endl;
+    }
+    cout << endl;
+}
 
 void strings_example()
 {
@@ -103,4 +134,6 @@ void strings_example()
     white_letters_remove_example();
 
     white_letters_remove_example_SV();
+
+    cin_example();
 }
