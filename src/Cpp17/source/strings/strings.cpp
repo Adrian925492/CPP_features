@@ -61,6 +61,39 @@ void white_letters_remove_example()
     cout << "After remove: {" << s2 << "}\n";
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 2: White signs remover - string view
+
+/* String view class - provides string interface without need of keeping copy
+of string inside string object. String view keeps only reference to c-style string chain. It can be 
+used in all elements that accepts string interface (or iterators), but uses it
+like c style char array.
+
+*/
+
+string_view white_signs_removal_SV(string_view s)
+{
+    const auto white_signs {" \t\n"};
+    const auto first = s.find_first_not_of(white_signs);
+    s.remove_prefix(min(s.size(), first));  //As first, if not found is sting_view::nops, which is -1, maped to int will be very large number, we can use min().
+    const auto last = s.find_last_not_of(white_signs);
+    if (last != string_view::npos)
+    {
+        s.remove_suffix(s.size() - last - 1);
+    }
+    return s;
+}
+
+void white_letters_remove_example_SV()
+{
+    cout << "White letters with string view remove example\n\n";
+    string_view s {"         Hello world         "sv};
+    cout << "Initial string: {" << s << "}\n";
+    string_view s2 = white_signs_removal_SV(s);
+    cout << "After remove: {" << s2 << "}\n";
+}
+
+
 void strings_example()
 {
     cout << "Strings example! \n\n";
@@ -68,4 +101,6 @@ void strings_example()
     basics_example();
 
     white_letters_remove_example();
+
+    white_letters_remove_example_SV();
 }
