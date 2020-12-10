@@ -4,6 +4,7 @@
 #include <iterator>
 #include <string>
 #include <algorithm>
+#include <sstream>
 #include "strings.h"
 
 using namespace std;
@@ -125,6 +126,26 @@ void cin_example()
     cout << endl;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 5: Counting words in input data
+
+/* In the recepie we will count words in input data using stream */
+
+template <typename T>
+size_t num_of_words(T& is)
+{
+    return distance(istream_iterator<string>{is}, {});
+}
+
+void counting_words_example()
+{
+    cout << "Counting words example\n";
+    string s {"Ala ma kota, kot ma ale"};
+    cout << "We will count nr of words in sentence: " << s << endl;
+    istringstream ss{s};
+    cout << "Number of words: " << num_of_words(ss) << endl;
+}
+
 void strings_example()
 {
     cout << "Strings example! \n\n";
@@ -136,4 +157,6 @@ void strings_example()
     white_letters_remove_example_SV();
 
     cin_example();
+
+    counting_words_example();
 }
