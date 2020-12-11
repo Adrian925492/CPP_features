@@ -1,0 +1,3 @@
+"Gdansk" 100000 "Pomorskie"
+"Warszawa" 20000 "Mazowieckie"
+"Wroclaw" 123000 "Dolnoslaskie"

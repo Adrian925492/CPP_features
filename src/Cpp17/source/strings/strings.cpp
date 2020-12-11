@@ -5,8 +5,13 @@
 #include <string>
 #include <algorithm>
 #include <sstream>
+#include <fstream>
 #include <iomanip>
 #include <locale>
+#include <map>
+#include <utility>
+#include <algorithm>
+#include <numeric>
 #include "strings.h"
 
 using namespace std;
@@ -184,7 +189,7 @@ void string_formatting_example()
     cout << dec;
     cout << "Dec type: liczba: " << 100 << endl;
 
-    // True ansd false boolean
+    // True ansd false boolean  
     cout << "True and false bollen: " << false << " " << true << endl;
     cout << "True and false ascii: " << boolalpha << false << " " << true << endl;  // Will print boolean as ascii true/false
 
@@ -236,6 +241,49 @@ void stream_overload_example()
     for (auto& v : c) cout << v;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 8: Map parsing example
+
+/* In the recepie we will produce map serializer using streams */
+
+struct citydata
+{
+    int size;
+    string department;
+};
+// Input stream operator for citydata - to able to add each cotudata
+istream& operator >> (istream& is, citydata &d)
+{
+    return is >> d.size >> quoted(d.department);
+}
+
+// Input stream operator for map node - here p.second is citydata, so here we use previously defined operator >>
+istream& operator >> (istream& is, pair<string, citydata> &p)
+{
+    return is >> quoted(p.first) >> p.second;
+}
+
+void map_serializer_example()
+{
+    cout << "Map serializer example\n\n";
+
+    cout << "Data taken from text file. \n";
+    map<string, citydata> m;
+    ifstream ifs;
+    ifs.open("/repo/CPP_features/src/Cpp17/source/strings/city_database.txt");
+    copy(istream_iterator<pair<string, citydata>>{ifs}, {}, inserter(m, end(m)));   //Here we can fill in map by cin
+    auto max_func ([](size_t old_max, const auto &b){return max(old_max, b.first.length());});  //Here we will find element of longest name
+    size_t width {accumulate(begin(m), end(m), 0u, max_func)};   
+    ifs.close();
+
+    // And printing
+    cout << "Deserialized data: \n";
+    for (const auto &[name, data] : m) {
+        const auto &[size, department] = data;
+        cout << left << setw(width) << name << ": " << size << ": " << department << endl;
+    }
+
+}
 
 void strings_example()
 {
@@ -254,4 +302,6 @@ void strings_example()
     string_formatting_example();
 
     stream_overload_example();
+
+    map_serializer_example();
 }
