@@ -5,6 +5,8 @@
 #include <string>
 #include <algorithm>
 #include <sstream>
+#include <iomanip>
+#include <locale>
 #include "strings.h"
 
 using namespace std;
@@ -146,6 +148,95 @@ void counting_words_example()
     cout << "Number of words: " << num_of_words(ss) << endl;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 6: Stream formatting
+
+/* In the recepie we will present examples of string formattings */
+
+//Helper function
+void print_aligned_demo(int val, size_t width, char fill_char = ' ')
+{
+    cout << "=============================\n";
+    cout << setfill(fill_char); //Sets nr of chars to fill align
+    cout << left << setw(width) << val << endl;
+    cout << right << setw(width) << val << endl;
+    cout << internal << setw(width) << val << endl;
+}
+
+void string_formatting_example()
+{
+    cout << "String_formatting_example\n\n";
+    
+    // Print alignment
+    print_aligned_demo(123456, 15);
+    print_aligned_demo(123456, 15, '_');
+
+    // Data type print
+    cout << hex << showbase;        // Will stear if print value as hex with base (0x), as oct or dec
+    print_aligned_demo(0x123abc, 15);
+
+    cout << oct;
+    print_aligned_demo(123456, 15);
+
+    cout << "Hex with capital letters: " << hex << uppercase << 0x123abc << endl;
+
+    cout << "Liczba: " << 100 << endl;
+    cout << dec;
+    cout << "Dec type: liczba: " << 100 << endl;
+
+    // True ansd false boolean
+    cout << "True and false bollen: " << false << " " << true << endl;
+    cout << "True and false ascii: " << boolalpha << false << " " << true << endl;  // Will print boolean as ascii true/false
+
+    //Double numbers
+    cout << "Double numbers: " 
+    << 12.3 << ", " 
+    << 12.0 << ", "
+    << showpoint << 12.0 << endl;   //Showpoint will show fraction even if it is 0
+
+    // Notation
+    cout << "Double in scientific notation: " << scientific << 123.000000000003 << endl;    // Will print as 123e...
+    cout << "Double in normal notation: " << fixed << 123.000000000003 << endl;
+
+    // Number precision
+    cout << "Precision number to 10: " << setprecision(10) << 0.0000000001 << endl;
+    cout << "Precision number to 1: " << setprecision(1) << 0.0000000001 << endl;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 7: Stream operator overload
+
+/* In the example we will overload stream operator to obtain ability of 
+in/out user defined data structures */
+
+struct cities
+{
+    string name;
+    int population;
+    int size;
+};
+
+ostream& operator << (ostream& os, cities data)
+{
+    cout << "City name: " << data.name << ", pop: " << data.population << " ,size: " << data.size << endl;
+    return os;
+}   
+
+void stream_overload_example()
+{
+    cout << "Stream overload example\n\n";
+
+    vector<cities> c{
+        {"Warszawa", 300000, 12500},
+        {"Wroclaw", 342304, 1233},
+        {"Gdansk" ,12300, 123000}
+    };
+
+    // Cout overloaded
+    for (auto& v : c) cout << v;
+}
+
+
 void strings_example()
 {
     cout << "Strings example! \n\n";
@@ -159,4 +250,8 @@ void strings_example()
     cin_example();
 
     counting_words_example();
+
+    string_formatting_example();
+
+    stream_overload_example();
 }
