@@ -12,6 +12,7 @@
 #include <utility>
 #include <algorithm>
 #include <numeric>
+#include <unordered_map>
 #include "strings.h"
 
 using namespace std;
@@ -274,13 +275,228 @@ void map_serializer_example()
     copy(istream_iterator<pair<string, citydata>>{ifs}, {}, inserter(m, end(m)));   //Here we can fill in map by cin
     auto max_func ([](size_t old_max, const auto &b){return max(old_max, b.first.length());});  //Here we will find element of longest name
     size_t width {accumulate(begin(m), end(m), 0u, max_func)};   
-    ifs.close();
+    ifs.close();        
 
     // And printing
     cout << "Deserialized data: \n";
     for (const auto &[name, data] : m) {
         const auto &[size, department] = data;
         cout << left << setw(width) << name << ": " << size << ": " << department << endl;
+    }
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 9: Using output stream iterator example
+
+/* In the recepie we will use output stream iterators for displaying data */
+
+//Helper function - translate int to string number
+string word_num(int i)
+{
+    unordered_map<int, string> m {
+        {1, "one"}, {2, "two"}, {3, "three"}, {4, "four"}, {5, "five"}
+    };
+    auto match = m.find(i);
+    if (match == m.end()) return "unexisting";
+    return match -> second;
+}
+
+//Helper datatype
+struct bork {
+    int borks;
+    bork(int i) : borks(i) {}
+
+    void print(ostream& os) const{
+        fill_n(ostream_iterator<string>{os, " "}, borks, "bork!"s);
+        cout << endl;
+    }
+};
+
+//Ostream operator for bork implementation
+ostream& operator<<(ostream& os, const bork &b)
+{
+    b.print(os);
+    return os;
+}
+
+void ostream_example()
+{
+    cout << "Ostream example \n\n";
+
+    //Input data vector
+    const vector<int> v{1,2,3,4,5};
+
+    // Using ostream iterator for printing
+    ostream_iterator<int> oit {cout};
+    for (int i : v) {*oit = i;}
+    cout << endl;
+
+    ostream_iterator<int> oit_comma {cout, ", "};
+    for (int i : v) {*oit_comma = i;}
+    cout << endl;
+
+    // Using ostream with algorithm
+    copy(begin(v), end(v), oit);
+    cout << endl;
+    copy(begin(v), end(v), oit_comma);
+    cout << endl;
+
+    //Implicit conversion to ostream iterator:
+    copy(begin(v), end(v), ostream_iterator<bork>{cout, ", "});
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 10: Reirecting cout buffer
+
+/* Each standars steam (cin, cout, cerr) object has its own data buffer which acts like
+an frontend for the stream. Such buffer sor stringstream would be assigned string, and for
+file strim - the file. For cout it is standard output. We can reassign such buffer if needed to
+change direction of outputs. It can be usabel for example when we want not to show any infos
+from library which we have to use byt we have no sources.
+*/
+
+class redirect_cout_region{
+    using buftype = decltype(cout.rdbuf()); //That will get type of cout buffer
+    ofstream ofs;
+    buftype buffer_backup;
+
+    public:
+    explicit redirect_cout_region(const string &filename) : 
+        ofs{filename}, buffer_backup{cout.rdbuf(ofs.rdbuf())} {}
+    
+    redirect_cout_region() : ofs{}, buffer_backup{cout.rdbuf(ofs.rdbuf())} {}
+
+    ~redirect_cout_region() {
+        cout.rdbuf(buffer_backup);  //Retirve buffer to previous version (backuped)
+    }
+};
+
+void redirect_buffer_example()
+{
+    cout << "Redirect buffer example! \n\n";    //We will redirect outputs to a file
+
+    cout << "Before redirect...." << endl;
+    {
+        redirect_cout_region _ ("cout_file.txt");
+        cout << "Redirected data 1...." << endl;
+        cout << "Redirected data 2...." << endl;
+        cout << "Redirected data 3...." << endl;
+    }
+    {
+        redirect_cout_region _;
+        cout << "That data will not be shown at all! " << endl;
+    }
+    cout << "Retivered to cout." << endl;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 11: Own string example
+
+/* In the recepie we will create own string class basing on overrided char_traits class. The char_traits
+is one of types provided for std::string. In fact, steing is just specialization of basic_string<char> class.
+
+We can extend the specialization to: string = basic_string<char, char_traits<char>, allocator<char>>.
+
+Char defines type of single element, char_traits class gives all algorithms needed to string (like
+compaison strings), and allocator gives mechanisms for allocation and deallocation the memory.
+
+By inheritence, we can extend char_traits class, override some mechanisms in it and use our implementation
+to configure new, user defined string class.
+
+*/
+
+//Redefining tolow function - just to have it constexpr
+static constexpr char tolow(char c)
+{
+    switch(c){
+        case 'A'...'Z': return c - 'A' + 'a';
+        default: return c;
+    }
+}
+
+//LC string class will create strings with lovercase only, even if we init it hy uppercase
+class lc_traits : public char_traits<char> {
+    public:
+    //Override method that will assign chars to its place in memory - to convert all char to lover case
+        static constexpr void assign(char_type& r, const char_type& a)
+        {
+            r = tolow(a);
+        }
+
+    // That function will copy char chain to memory
+        static char_type* copy(char_type* dest, const char_type* src, size_t count)
+        {
+            transform(src, src + count, dest, tolow);
+            return dest;
+        }
+};
+
+//CI traits class will compare strings without case sensitivity
+class ci_traits : public char_traits<char> {
+    public:
+    // Override comparison method
+        static constexpr bool eq(char_type a, char_type b) 
+        {
+            return tolow(a) == tolow(b);
+        }
+    // Override less than method
+        static constexpr bool lt(char_type a, char_type b) 
+        {
+            return tolow(a) < tolow(b);
+        }
+    //Override compare method
+        static constexpr int compare(const char_type* s1, const char_type* s2, size_t count)
+        {
+            for(; count; ++s1, ++s2, --count) {
+                const char_type diff (tolow(*s1) - tolow(*s2));
+                if (diff < 0) {return -1;}
+                else if (diff > 0) {return 1;}
+            }
+            return 0;
+        }
+    //Override find method
+        static constexpr const char_type* find(const char_type* p, size_t count, const char_type& ch) 
+        {
+            const char_type find_c {tolow(ch)};
+            for(; count != 0; --count, ++p)
+            {
+                if (find_c == tolow(*p)) {return p;}
+            }
+            return nullptr;
+        }
+};
+
+//Define string types basing on defined char traits types
+using lc_string = basic_string<char, lc_traits>;
+using ci_string = basic_string<char, ci_traits>;
+
+//Define stream operators so we cound print the strings
+ostream& operator<< (ostream& os, const lc_string& str)
+{
+    return os.write(str.data(), str.size());
+}
+
+ostream& operator<< (ostream& os, const ci_string& str)
+{
+    return os.write(str.data(), str.size());
+}
+
+void own_string_example()
+{
+    cout << "Own string example\n\n";
+
+    cout << "string: " << string{"AlA Ma Kota"} << endl;
+    cout << "lc_string: " << lc_string{"AlA Ma Kota"} << endl;
+    cout << "ic_string: " << ci_string{"AlA Ma Kota"} << endl;    
+
+    // Case sensitivity comparison check
+    ci_string s1 {"Ala Ma Kota"};
+    ci_string s2 {"ala ma kota"};
+    if (s1 == s2)
+    {
+        cout << "CI string compares case insensitive! " << endl;
     }
 
 }
@@ -304,4 +520,10 @@ void strings_example()
     stream_overload_example();
 
     map_serializer_example();
+
+    ostream_example();
+
+    redirect_buffer_example();
+
+    own_string_example();
 }
