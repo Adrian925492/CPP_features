@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <numeric>
 #include <unordered_map>
+#include <regex>
 #include "strings.h"
 
 using namespace std;
@@ -501,6 +502,94 @@ void own_string_example()
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 12: Regex usage example
+
+/* In the example we will use regex to find desired elements - http links from html page 
+    Regex are available from Cpp11 standard.
+*/
+
+//Heler function for printing
+template<typename It>
+void print(It it, It end)
+{
+    while(it != end)
+    {
+        const string link (*it++);
+        if(it == end) {break;}
+        const string desc (*it++);
+        cout << left << setw(4) << "Link: " << setw(86) << link << " Destination: " << desc << endl;
+    }
+}
+
+void regex_example()
+{
+    cout << "Regex example\n\n";
+    cout << "We will parse file.html to find all http links. Links found: \n";
+
+    ifstream ifs("/repo/CPP_features/src/Cpp17/source/strings/file.html");
+    ifs >> noskipws;
+    string input;
+    copy(istream_iterator<char>{ifs}, {}, inserter(input, input.end()));
+    
+    //Define egex pattern
+    const regex link_re {"<a href=\"([^\"]*)\"[^<]*>([^<]*)</a>"};
+
+    // Create regex token iterator - will return next match untill no more matches. The iterator do not know its end untill reached.
+    sregex_token_iterator it {begin(input), end(input), link_re, {1, 2}};
+    
+    print(it, {});
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 13: Format guard example
+
+/* In the recepie we will define special class which will act as format guard. Untill
+scope will be ended, it will keep streams formatted according to needs.
+*/
+
+class format_guard{
+    decltype(cout.flags()) f {cout.flags()};    //Save old flags of cout - to retierve it afterwards
+    public:
+    ~format_guard() {cout.flags(f);}            //Set old flags in destructor - to retirve after exiting scope
+};
+
+//Helper class - will pack value we want to print in special formatting. Ostream operator<< also needed.
+template<typename T>
+class scientific_type {
+public:
+    T value;
+    explicit scientific_type(T val) : value(val) {}
+};
+
+// And here we will define special formatting
+template<typename T>
+ostream& operator<< (ostream& os, const scientific_type<T> &w)
+{
+    format_guard _;
+    os << scientific << uppercase << showpos;
+    return os << w.value;
+}
+
+void format_guard_example()
+{
+    cout << "Format guard example\n\n";
+    {
+        format_guard _;  //The guard destructor will retirve cout to format before special manner after exiting the scope.
+        cout << hex << scientific << showbase << uppercase;
+        cout << "Numbers formated explicitly in special manner: \n";
+        cout << 0x123abc << endl;
+        cout << 0.12345 << endl;
+    }
+    cout << "Numbers formated explicitly in normal manner: \n";
+    cout << 0x123abc << endl;
+    cout << 0.12345 << endl;    
+    cout << "The formatting has been resetted by format guard. \n";
+
+    cout << "Different formatting styles: \n" 
+        << 123.0 << " " << scientific_type{123.0} << endl;
+}
+
 void strings_example()
 {
     cout << "Strings example! \n\n";
@@ -526,4 +615,8 @@ void strings_example()
     redirect_buffer_example();
 
     own_string_example();
+
+    regex_example();
+
+    format_guard_example();
 }

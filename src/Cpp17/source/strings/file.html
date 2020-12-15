@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>
+              Blog : 
+            Standard C++
+    </title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/favicon.ico" rel="shortcut icon">
+    <link rel="apple-touch-icon" href="apple-touch-icon-57.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="apple-touch-icon-144.png">
+    <link href="https://fonts.googleapis.com/css?family=Crimson+Text|Roboto|Roboto+Condensed:400,700&display=swap" rel="stylesheet">
+    <link href="/assets/css/app.css?v012" rel="stylesheet" media="all" type="text/css">
+    <link href="/assets/css/prettify.css" rel="stylesheet" media="all" type="text/css">
+
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>    
+    <script src="/mint/?js" type="text/javascript"></script>
+  </head>
+  
+  <body class="hide-sidebar">
+    <div id="root">
+    
+      <div id="crown">
+        <a id="sidebar-toggle" href="#sidebar">Show sidebar &raquo;</a>
+        <ul class="user">
+                          <li><a href="https://isocpp.org/member/login">Sign In / Suggest an Article</a></li>
+          <li><a href="https://isocpp.org/member/register">Register</a></li>
+                </ul>
+      </div>
+
+      <header id="top" role="banner">
+        <div class="container">
+          <h1>
+            <a href="https://isocpp.org/"><img src="/assets/images/cpp_logo.png" alt="Standard C++"></a>
+          </h1>
+          <nav role="navigation">
+            <ul id="nav-sub">
+<li class="first"><a href="https://isocpp.org/get-started">Get Started!</a></li>
+<li><a href="https://isocpp.org/tour">Tour</a></li>
+<li><a href="https://isocpp.org/guidelines">Core Guidelines</a></li>
+<li><a href="https://isocpp.org/faq">Super-FAQ</a></li>
+<li><a href="https://isocpp.org/std">Standardization</a></li>
+<li class="last"><a href="https://isocpp.org/about">About</a></li>
+</ul>
+          </nav>
+          <form action="/search/google">
+            <input type="text" name="q" id="q" maxlength="100" value="" class="textbox">
+            <input type="submit" value="Search" class="button">
+          </form>
+          <!--
+          <form method="post" action="https://isocpp.org/"  >
+<div class='hiddenFields'>
+<input type="hidden" name="ACT" value="6" />
+<input type="hidden" name="XID" value="6c9e6f29e16182fafa621b4f89db0e5b9eee8e56" />
+<input type="hidden" name="RES" value="" />
+<input type="hidden" name="meta" value="YTo5OntzOjY6InN0YXR1cyI7czowOiIiO3M6NzoiY2hhbm5lbCI7czoxOToiYmxvZ3xwYWdlc3xmYXF8d2lraSI7czo4OiJjYXRlZ29yeSI7czowOiIiO3M6OToic2VhcmNoX2luIjtzOjEwOiJldmVyeXdoZXJlIjtzOjU6IndoZXJlIjtzOjM6ImFsbCI7czoxMjoic2hvd19leHBpcmVkIjtzOjA6IiI7czoxOToic2hvd19mdXR1cmVfZW50cmllcyI7YjowO3M6MTE6InJlc3VsdF9wYWdlIjtzOjE0OiJzZWFyY2gvcmVzdWx0cyI7czoxNToibm9fcmVzdWx0c19wYWdlIjtzOjE3OiJzZWFyY2gvbm9fcmVzdWx0cyI7fTNkZmE5MTM0YzRkODdjNWE2MDc5Y2YxZjA5OGYxOTRh" />
+<input type="hidden" name="site_id" value="1" />
+</div>
+
+
+            <input type="text" name="keywords" id="keywords" maxlength="100" value="M50o93H7pQ09L8X1t49cHY01Z5j4TT91fGfr" class="textbox">
+            <input type="submit" value="Search" class="button">
+          </form>
+          -->
+        </div>
+      </header>
+
+      <div id="content" class="hide-sidebar" role="main">
+        <div class="container">
+
+
+<div id="sidebar">
+        <section>
+              <header>Features</header>
+            <div class="sidebar-section-content prettify">
+        <p>
+	<a href="https://isocpp.org/std/status">Current ISO C++ status</a></p>
+<p>
+	&nbsp;</p>
+<p>
+	<a href="https://isocpp.org/std/meetings-and-participation/upcoming-meetings">Upcoming ISO C++ meetings</a></p>
+<p>
+	&nbsp;</p>
+<p>
+	<a href="https://isocpp.org/wiki/faq/conferences-worldwide">Upcoming C++ conferences</a></p>
+<p>
+	&nbsp;</p>
+<p>
+	<a href="http://en.cppreference.com/w/cpp/compiler_support">Compiler conformance status</a></p>
+      </div>
+    </section>
+  
+  
+  
+  <nav>
+    <section>
+      <header>
+        Categories
+      </header>
+      <ul>
+      <ul id="nav_categories" class="nav_categories">
+			<li>
+        <li><a href="https://isocpp.org/blog/category/news">News</a></li>
+      </li>
+			<li>
+        <li><a href="https://isocpp.org/blog/category/product-news">Product News</a></li>
+      </li>
+			<li>
+        <li><a href="https://isocpp.org/blog/category/articles-books">Articles & Books</a></li>
+      </li>
+			<li>
+        <li><a href="https://isocpp.org/blog/category/video-on-demand">Video & On-Demand</a></li>
+      </li>
+			<li>
+        <li><a href="https://isocpp.org/blog/category/events">Events</a></li>
+      </li>
+			<li>
+        <li><a href="https://isocpp.org/blog/category/training">Training</a></li>
+      </li>
+			<li>
+        <li><a href="https://isocpp.org/blog/category/standardization">Standardization</a></li>
+      </li>
+		</ul>
+
+      </ul>
+    </section>
+    
+    <section>
+      <header>Tags</header>
+      <p class="tags">
+      
+        <a href="/blog/tag/basics">basics</a>
+      
+        <a href="/blog/tag/intermediate">intermediate</a>
+      
+        <a href="/blog/tag/advanced">advanced</a>
+      
+        <a href="/blog/tag/experimental">experimental</a>
+      
+      </p>
+    </section>
+    
+    <section>
+      <header>
+        Subscribe
+      </header>
+      <div>
+        <ul>
+          <li><a href="https://isocpp.org/blog/rss" class="icon rss">All Posts</a></li>
+          <li><a href="https://isocpp.org/blog/rss_comments" class="icon rss">All Comments</a></li>
+          
+            <li><a href="https://isocpp.org/blog/rss/category/news" class="icon rss">News</a></li>
+          
+            <li><a href="https://isocpp.org/blog/rss/category/product-news" class="icon rss">Product News</a></li>
+          
+            <li><a href="https://isocpp.org/blog/rss/category/articles-books" class="icon rss">Articles & Books</a></li>
+          
+            <li><a href="https://isocpp.org/blog/rss/category/video-on-demand" class="icon rss">Video & On-Demand</a></li>
+          
+            <li><a href="https://isocpp.org/blog/rss/category/events" class="icon rss">Events</a></li>
+          
+            <li><a href="https://isocpp.org/blog/rss/category/training" class="icon rss">Training</a></li>
+          
+            <li><a href="https://isocpp.org/blog/rss/category/standardization" class="icon rss">Standardization</a></li>
+          
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <header>
+        Archives
+      </header>
+      <ul>
+        <li><a href="https://isocpp.org/blog/2020/12">December 2020</a></li>
+<li><a href="https://isocpp.org/blog/2020/11">November 2020</a></li>
+<li><a href="https://isocpp.org/blog/2020/10">October 2020</a></li>
+<li><a href="https://isocpp.org/blog/2020/09">September 2020</a></li>
+<li><a href="https://isocpp.org/blog/2020/08">August 2020</a></li>
+<li><a href="https://isocpp.org/blog/2020/07">July 2020</a></li>
+<li><a href="https://isocpp.org/blog/2020/06">June 2020</a></li>
+<li><a href="https://isocpp.org/blog/2020/05">May 2020</a></li>
+<li><a href="https://isocpp.org/blog/2020/04">April 2020</a></li>
+<li><a href="https://isocpp.org/blog/2020/03">March 2020</a></li>
+<li><a href="https://isocpp.org/blog/2020/02">February 2020</a></li>
+<li><a href="https://isocpp.org/blog/2020/01">January 2020</a></li>
+
+      </ul>
+    </section>
+  </nav>
+    
+      <section>
+              <header>Upcoming Events</header>
+            <div class="sidebar-section-content">
+        <p>
+	<strong><a href="https://accu.org/conf-news/2021/2020-10-20-accu2021cfpannouncement/">ACCU 2021</a></strong></p>
+<p>
+	Mar 9-13, ONLINE EVENT</p>
+      </div>
+    </section>
+  
+      <section>
+              <header>Twitter Timeline</header>
+            <div class="sidebar-section-content">
+        <div class="twitter-container">
+	<a class="twitter-timeline" data-chrome="transparent noheader nofooter" data-height="600" data-theme="dark" data-width="200" href="https://twitter.com/isocpp?ref_src=twsrc%5Etfw">Tweets by isocpp</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></div>
+      </div>
+    </section>
+  
+</div>
+
+<div id="mainbar">
+
+    <header>
+    <div class="breadcrumbs">
+      <a href="/">Home</a> &raquo; 
+              Blog
+          </div>
+    
+    
+    <h2>
+          Blog
+        </h2>
+  </header>
+  
+      
+    
+      <article class="prettify">
+        <h3 class="flush-bottom"><a href="https://isocpp.org/blog/2020/12/remembering-beman-dawes">Remembering Beman Dawes</a></h3>
+        <p class="byline">By Bjarne Stroustrup | 
+        Dec 4, 2020 09:47 AM 
+         | 
+        Tags: <em>None</em>  </p>
+        <h2>
+	Remembering Beman Dawes</h2>
+<h4>
+	by Bjarne Stroustrup and Herb Sutter</h4>
+<p>
+	<img alt="beman.jpg" src="https://isocpp.org/files/img/beman.jpg" style="width: 400px; margin: 10px; float: right;" />On December 1, we lost Beman Dawes, one of the most influential people in C++&rsquo;s history. The C++ committee and communities, and we personally, owe Beman a lot. Although no funeral is planned because of Covid, we can all keep Beman and his many contributions, and his wife Sonda and their family, in our thoughts at this difficult time.</p>
+<p>
+	Beman was a member of the C++ standards committee (WG21) since 1992 and chair of the Library Working Group for five years during the completion of the first C++ standard, C++98.</p>
+<p>
+	I (Bjarne) remember that in 1994, the adoption of the STL into the standard was most uncertain because many doubted its utility and feared its novelty. At a critical point, Beman spoke up and calmly explained to the committee that he had thought the STL too complex for ordinary programmers, but as an exercise he had implemented about 10% of it himself so he no longer considered it beyond the standard. It can be argued that the STL and the techniques it pioneered saved C++ as a living language. Without Beman, this may very well not have happened.</p>
+<p>
+	Beman was the original developer of <code>&lt;filesystem&gt;</code> and shepherded it through its tortuous path into the standard. When it mattered, he could be patient.</p>
+<p>
+	Boost was an &ldquo;invention&rdquo; of Beman&rsquo;s as a cofounder with Dave Abrahams and soon many others. Like many, Beman decided (correctly) that lack of quality libraries was a startling weakness of C++ &mdash; we had and have an incredible number of libraries, but they have no shared style and often don&rsquo;t easily interoperate. Beman&rsquo;s key idea was to create a community around the development of libraries that could complement the standard library. Many of the most successful Boost libraries are now part of the standard and used world-wide. In support of the community idea, Beman was one of the founders of BoostCon (later called C++ Now). That conference created an important early hub where the people working on further evolution of the C++ library and language after the first standard could meet to socialize and exchange ideas, a culture that has grown broader and now flourishes at a number of conferences.</p>
+<p>
+	We have relied on Beman&#39;s skills and wisdom broadly: When the Standard C++ Foundation was created in 2012, Beman was one of the founding directors along with us. When WG21 created the Library Evolution group in 2013 to have a separate group be responsible for the overall design of the C++ standard library, Beman kindly agreed to step up to be its founding chair to get it started on the right foot and find his own replacement. When WG21 created the Direction Group in 2017 so that we could have a small group of the most wise and respected C++ experts in the world to recommend direction for C++ evolution, Beman was a natural choice to invite as a founding member, and we are glad he accepted that too.</p>
+<p>
+	Clearly, every C++ programmer owes a debt to Beman. He was an experienced application developer who brought his insights, skills, and energies to the standards committee. Without him, C++ would not be what it is today.</p>
+<p>
+	On a personal note, I (Herb) attended my first WG21 meeting in summer 1997. Even then when the committee was smaller, it was a pretty intimidating thing to be an unknown person showing up unannounced to a gathering of the Who&rsquo;s Who of all the world-class experts I had known only from their books and reputations. Among many who welcomed me, Beman was key &mdash; I spent most of my time there in the Library group, Beman&rsquo;s group, and all I felt qualified to do was sit and listen and absorb how things worked. Beman personally, and the warm culture he fostered in his group, made me feel comfortable and welcome enough that I learned a lot that week, attended another meeting, and another, and never quite stopped.</p>
+<p>
+	Thanks, Beman. Thank you, very much, for your enduring contribution that has benefited so many people.</p>
+      </article>
+
+      
+      
+    
+    
+      <article class="prettify">
+        <h3 class="flush-bottom"><a href="https://isocpp.org/blog/2020/12/copperspice-cpp-memory-model">CopperSpice: C++ Memory Model</a></h3>
+        <p class="byline">By Ansel Sermersheim | 
+        Dec 14, 2020 02:40 PM 
+         | 
+        Tags: <em>None</em>  </p>
+        <p>
+	New video on the CopperSpice YouTube Channel:</p>
+<blockquote>
+	<h3>
+		<a href="https://www.youtube.com/watch?v=KgzjxfYaScU">C++ Memory Model</a></h3>
+</blockquote>
+<blockquote>
+	<p>
+		by Barbara Geller and Ansel Sermersheim</p>
+</blockquote>
+<p>
+	About the video:</p>
+<blockquote>
+	<p>
+		In this video we examine the C++ memory model and explain why it is a completely separate component from the multi-threading library added in C++11. We also look at the development of the memory model and its purpose in the C++ standard.</p>
+</blockquote>
+<blockquote>
+	<p>
+		Please take a look and remember to subscribe!</p>
+</blockquote>
+      </article>
+
+      
+      
+    
+    
+      <article class="prettify">
+        <h3 class="flush-bottom"><a href="https://isocpp.org/blog/2020/12/c-and-cpp-analyzers-detect-cryptography-related-security-issues">C and C++ analysers detect cryptography-related security issues -- Alexandre Gigleux</a></h3>
+        <p class="byline">By ganncamp | 
+        Dec 14, 2020 02:29 PM 
+         | 
+        Tags: <em>None</em>  </p>
+        <p>
+	Recent improvements to SonarCloud C++ analysis (coming soon in SonarQube 8.6!) bring new rules related to cryptography.</p>
+<blockquote>
+	<h3>
+		<a href="https://community.sonarsource.com/t/c-and-c-analyzers-detect-cryptography-related-security-issues/34927">C and C++ analyzers detect cryptography-related security issues</a></h3>
+	<p>
+		by Alexandre Gigleux</p>
+</blockquote>
+<p>
+	From the article:</p>
+<blockquote>
+	<p>
+		Communications should be encrypted to protect users&rsquo;s privacy, but when it comes to really implement it, it&rsquo;s not that easy due to the complexity of the area.</p>
+	<p>
+		With SonarCloud, you are no longer alone thanks to these 7 new security rules focusing on detecting cryptography-related security issues</p>
+</blockquote>
+      </article>
+
+      
+      
+    
+    
+      <article class="prettify">
+        <h3 class="flush-bottom"><a href="https://isocpp.org/blog/2020/12/atomic-references-with-cpp20">Atomic References with C++20</a></h3>
+        <p class="byline">By Adrien Hamelin | 
+        Dec 14, 2020 02:04 PM 
+         | 
+        Tags: 
+                    <a href="https://isocpp.org/blog/tag/c++20" class="tag">c++20</a></p>
+        <p>
+	Control when you need atomicity.</p>
+<blockquote>
+	<h3>
+		<a href="http://www.modernescpp.com/index.php/atomic-ref">Atomic References with C++20</a></h3>
+	<p>
+		by Rainer Grimm</p>
+</blockquote>
+<p>
+	From the article:</p>
+<blockquote>
+	<p>
+		Atomics receives a few important extensions in C++20. Today, I start with the new data type std::atomic_ref...</p>
+</blockquote>
+      </article>
+
+      
+      
+    
+    
+      <article class="prettify">
+        <h3 class="flush-bottom"><a href="https://isocpp.org/blog/2020/12/boost-1.75.0">Boost 1.75.0</a></h3>
+        <p class="byline">By Adrien Hamelin | 
+        Dec 14, 2020 02:02 PM 
+         | 
+        Tags: 
+                    <a href="https://isocpp.org/blog/tag/boost" class="tag">boost</a></p>
+        <p>
+	A new boost is out.</p>
+<blockquote>
+	<h3>
+		<a href="https://www.boost.org/users/history/version_1_75_0.html">Version 1.75.0</a></h3>
+</blockquote>
+      </article>
+
+      
+      
+    
+    
+      <article class="prettify">
+        <h3 class="flush-bottom"><a href="https://isocpp.org/blog/2020/12/cpp17-structured-bindings-for-more-safe-functional-code-dmitrii-khizbullin">C++17 structured bindings for more safe, functional code--Dmitrii Khizbullin</a></h3>
+        <p class="byline">By Adrien Hamelin | 
+        Dec 14, 2020 01:57 PM 
+         | 
+        Tags: 
+                    <a href="https://isocpp.org/blog/tag/c++17" class="tag">c++17</a></p>
+        <p>
+	You like the style?</p>
+<blockquote>
+	<h3>
+		<a href="https://itnext.io/c-17-structured-bindings-for-more-safe-functional-code-c0c5b4d31b0d">C++17 structured bindings for more safe, functional code</a></h3>
+	<p>
+		by&nbsp;Dmitrii Khizbullin</p>
+</blockquote>
+<p>
+	From the article:</p>
+<blockquote>
+	<p>
+		The overall idea of this article is to showcase how to keep the scope (aka block) as clean as possible with C++17. By &ldquo;clean&rdquo; scope I mean two things:</p>
+	<ul>
+		<li>
+			as few variables as possible,</li>
+		<li>
+			all variables are const as often as possible...</li>
+	</ul>
+</blockquote>
+      </article>
+
+      
+      
+    
+    
+      <article class="prettify">
+        <h3 class="flush-bottom"><a href="https://isocpp.org/blog/2020/12/cpp20-comparisons-in-resharper-c-2020.3-igor-akhmetov">C++20 Comparisons in ReSharper C++ 2020.3 -- Igor Akhmetov</a></h3>
+        <p class="byline">By Anastasia Kazakova | 
+        Dec 10, 2020 12:11 PM 
+         | 
+        Tags: 
+                    <a href="https://isocpp.org/blog/tag/c++20" class="tag">c++20</a></p>
+        <p>
+	ReSharper C++ 2020.3 brings full support for C++20&rsquo;s changes to comparison semantics.</p>
+<blockquote>
+	<h3>
+		<a href="https://blog.jetbrains.com/rscpp/2020/12/10/cpp20-comparisons/">C++20 Comparisons in ReSharper C++ 2020.3</a></h3>
+	<p>
+		by&nbsp;Igor Akhmetov</p>
+</blockquote>
+<p>
+	This blog post briefly goes over the language updates to comparisons in C++20 and takes a look at how ReSharper C++ can help you use the new language features.</p>
+<blockquote>
+	<p>
+		The post discusses:</p>
+	<ul>
+		<li>
+			The complexity of pre-C++20 comparisons</li>
+		<li>
+			Three-way comparison operator, what is it for</li>
+		<li>
+			Operator rewriting rules</li>
+		<li>
+			Defaulted comparison operators</li>
+		<li>
+			Implicitly generated operator==</li>
+		<li>
+			Creating new operators from usage</li>
+	</ul>
+</blockquote>
+      </article>
+
+      
+      
+    
+    
+      <article class="prettify">
+        <h3 class="flush-bottom"><a href="https://isocpp.org/blog/2020/12/no-diagnostic-required-episode-0">No Diagnostic Required Episode #0 -- Anastasia Kazakova and Phil Nash</a></h3>
+        <p class="byline">By Anastasia Kazakova | 
+        Dec 9, 2020 12:54 PM 
+         | 
+        Tags: <em>None</em>  </p>
+        <p>
+	No Diagnostic Required, YouTube Show for C++ Annotated, Episode #0</p>
+<blockquote>
+	<h2>
+		<a href="https://www.youtube.com/watch?v=XRTm_6SULU0">No Diagnostic Required, Episode #0</a></h2>
+	<p>
+		by Anastasia Kazakova and Phil Nash</p>
+</blockquote>
+<p>
+	In this episode:</p>
+<blockquote>
+	<ul>
+		<li>
+			Welcome</li>
+		<li>
+			New C++ podcasts worth following</li>
+		<li>
+			ISO C++ Trip Report by Herb Sutter</li>
+		<li>
+			Modules support in Visual Studio&hellip; and in GCC 11!</li>
+		<li>
+			Qt6 libraries via Conan</li>
+		<li>
+			CLion 2020.3: It&rsquo;s all about debug!</li>
+		<li>
+			ReSharper C++ 2020.3: The perfect game dev companion for Unreal Engine!</li>
+		<li>
+			std::visit is everything wrong with modern C++</li>
+	</ul>
+	<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" frameborder="0" height="480" src="https://www.youtube.com/embed/XRTm_6SULU0" width="853"></iframe></blockquote>
+      </article>
+
+      
+      
+    
+    
+      <article class="prettify">
+        <h3 class="flush-bottom"><a href="https://isocpp.org/blog/2020/12/clion-2020.3-release-improve-the-way-you-develop-in-cpp">CLion 2020.3 release: Improve the way you develop in C++! -- Anastasia Kazakova</a></h3>
+        <p class="byline">By Anastasia Kazakova | 
+        Dec 9, 2020 12:05 PM 
+         | 
+        Tags: <em>None</em>  </p>
+        <p>
+	<img alt="" class="alignright" src="https://blog.jetbrains.com/wp-content/uploads/2020/12/blog-2x.png" style="float: right; width: 230px; height: 115px;" />CLion 2020.3 is released!</p>
+<blockquote>
+	<h3>
+		<a href="https://blog.jetbrains.com/clion/2020/12/clion-2020-3-debug-misra-qt/">CLion 2020.3: Core Dumps Debug and Debug as Root, CTest Support, MISRA Guideline Integration, and a Better Qt Project Experience</a></h3>
+	<p>
+		by&nbsp;Anastasia Kazakova</p>
+</blockquote>
+<p>
+	CLion 2020.3 brings significant improvements to key parts of the development process &ndash; code analysis, running and debugging applications, and unit testing.</p>
+<blockquote>
+	<ul>
+		<li>
+			Run and Debug:
+			<ul>
+				<li>
+					Run/Debug with Root privileges</li>
+				<li>
+					Debug core dumps</li>
+				<li>
+					Move the execution point while debugging to an arbitrary line of code in the editor</li>
+			</ul>
+		</li>
+		<li>
+			Project models
+			<ul>
+				<li>
+					For Makefile: support for projects using libtool, dolt and ccache</li>
+				<li>
+					For CMake: enable/disable CMake Profile</li>
+			</ul>
+		</li>
+		<li>
+			Unit testing: CTest support and test runner improvements for Google Test</li>
+		<li>
+			Code analysis and refactorings updates, including initial support for MISRA C 2012 and MISRA C++ 2008 guidelines</li>
+		<li>
+			Better Qt projects support</li>
+		<li>
+			Clang completion snippets</li>
+		<li>
+			An early preview for Code With Me, a new service from JetBrains for collaborative development and pair programming.</li>
+	</ul>
+</blockquote>
+      </article>
+
+      
+      
+    
+    
+      <article class="prettify">
+        <h3 class="flush-bottom"><a href="https://isocpp.org/blog/2020/12/bit-manipulation-with-cpp20-rainer-grimm">Bit Manipulation with C++20--Rainer Grimm</a></h3>
+        <p class="byline">By Adrien Hamelin | 
+        Dec 8, 2020 01:25 PM 
+         | 
+        Tags: 
+                    <a href="https://isocpp.org/blog/tag/c++20" class="tag">c++20</a></p>
+        <p>
+	Some bits and stuff.</p>
+<blockquote>
+	<h3>
+		<a href="http://www.modernescpp.com/index.php/bit-manipulation-with-c-20">Bit Manipulation with C++20</a></h3>
+	<p>
+		By Rainer Grimm</p>
+</blockquote>
+<p>
+	From the article:</p>
+<blockquote>
+	<p>
+		This post concludes my presentation of library features in C++20. Today I write about the class std::source_location and a few functions for bit manipulation...</p>
+</blockquote>
+      </article>
+
+      
+      
+    
+    
+  <footer>
+  
+        
+    <div class="back-to-top">
+      <a href="#">Back to Top</a>
+    </div>
+  </footer>
+
+</div>
+
+        </div>
+        
+        <div id="root-footer"></div>
+      </div>
+    </div>
+
+    <footer id="bottom" role="contentinfo">
+      <div class="container">
+        &copy; <a href="/home/terms-of-use">Copyright</a> 2020 Standard C++ Foundation. 
+        All rights reserved.
+        <ul id="nav-sub">
+<li class="first"><a href="https://isocpp.org/home/terms-of-use">Terms of Use</a></li>
+<li class="last"><a href="https://isocpp.org/home/privacy-policy">Privacy Policy</a></li>
+</ul>
+        <br>Hosted by <a href="https://m.do.co/c/32f291566cf7" target="_blank">DigitalOcean</a>
+      </div>
+    </footer>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="https://isocpp.org/javascript/jquery.min"><\/script>')</script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"></script>
+    <script>window.jQuery.ui || document.write('<script src="https://isocpp.org/javascript/jquery-ui.min"><\/script>')</script>
+    
+    <script type="text/javascript" charset="utf-8" src="https://isocpp.org/?ACT=comment_editor"></script>
+    <script type="text/javascript">
+	        					$(document).ready(function() {
+									$("*[id^=likee_]").click(function(){
+										var ids = $(this).attr("id").split("_");
+										if (ids[1]=="c"){
+											id=ids[2];
+											c="c_";
+											isCom="true";
+										} else {
+											id=ids[1];
+											c="";
+											isCom="false";
+										}
+										
+										$.ajax({
+	   										type: "POST",
+	   										url: "/blog",
+	   										data: "likee=true&entry_id="+id+"&isCom="+isCom,
+	   										success: function(msg){
+	     										//alert( "Data Saved: " + msg );
+	   										}
+	 									});
+	 									
+	 									$(this).replaceWith("<strong>"+$(this).html()+"</strong>");
+	 									$("#dislikee_"+c+id).replaceWith("<span>"+$("#dislikee_"+c+id).html()+"</span>");
+	 									$("#scoreeCount_"+c+id).html(parseInt($("#scoreeCount_"+c+id).html())+1);
+	 									$("#likeeCount_"+c+id).html(parseInt($("#likeeCount_"+c+id).html())+1);
+	 									$("#likeeReplace_"+c+id).replaceWith("");
+	 									$("#likeeShow_"+c+id).replaceWith($("#likeeShow_"+c+id).html());
+									});
+									
+									$("*[id^=dislikee_]").click(function(){
+										var ids = $(this).attr("id").split("_");
+										if (ids[1]=="c"){
+											id=ids[2];
+											c="c_";
+											isCom="true";
+										} else {
+											id=ids[1];
+											c="";
+											isCom="false";
+										}
+										$.ajax({
+	   										type: "POST",
+	   										url: "/blog",
+	   										data: "dislikee=true&entry_id="+id+"&isCom="+isCom,
+	   										success: function(msg){
+	     										//alert( "Data Saved: " + msg );
+	   										}
+	 									});
+	 									
+	 									$(this).replaceWith("<strong>"+$(this).html()+"</strong>");
+	 									$("#likee_"+c+id).replaceWith("<span>"+$("#likee_"+c+id).html()+"</span>");
+	 									$("#scoreeCount_"+c+id).html(parseInt($("#scoreeCount_"+c+id).html())-1);
+	 									$("#dislikeeCount_"+c+id).html(parseInt($("#dislikeeCount_"+c+id).html())+1);
+	 									$("#likeeReplace_"+c+id).replaceWith("");
+	 									$("#likeeShow_"+c+id).replaceWith($("#likeeShow_"+c+id).html());
+									});
+								
+								});	
+	        			  </script>
+    
+    <script type="text/javascript" src="/js/isocpp.lib.min.js"></script>
+    <script type="text/javascript" src="/js/global.js"></script>
+
+        
+    <script type="text/javascript">
+      $("#top nav a").each(function() {
+        var aSeg1 = $(this).attr("href").replace("http://", "").replace("https://", "").split("/")[1];
+        if (aSeg1 == "blog") {$(this).parent().addClass("here");}
+      });
+    </script>
+
+  </body>
+</html>
