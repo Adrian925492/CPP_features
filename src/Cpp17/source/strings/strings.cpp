@@ -14,6 +14,7 @@
 #include <numeric>
 #include <unordered_map>
 #include <regex>
+#include <system_error>
 #include "strings.h"
 
 using namespace std;
@@ -590,6 +591,32 @@ void format_guard_example()
         << 123.0 << " " << scientific_type{123.0} << endl;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 14: Exception handling example
+
+/* In that recepie we will handle exceptions caused by stream class */
+
+void exception_example()
+{
+    cout << "Exception example\n";
+
+    ifstream f;
+    f.exceptions(f.failbit | f.badbit); //Enable exceptions from data processing and file system errors
+    try {
+        f.open("plik.txt");
+        int i;
+        f >> i;
+        cout << "Number: " << i << endl;
+    } catch(ios_base::failure& e) {
+        cout << "Exception catched: ";
+        if (errno) {    //errno keeps system error code
+            cout << strerror(errno) << endl;    //strerror converts system error code to string message
+        }else{
+            cout << e.what() << endl;
+        }
+    }
+}
+
 void strings_example()
 {
     cout << "Strings example! \n\n";
@@ -619,4 +646,6 @@ void strings_example()
     regex_example();
 
     format_guard_example();
+
+    exception_example();
 }
