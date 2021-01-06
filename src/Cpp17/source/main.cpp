@@ -18,6 +18,7 @@
 #include "algorithms/algorithms.h"
 #include "advanced_algorithms/advanced_algorithms.h"
 #include "strings/strings.h"
+#include "traits/traits.h"
 
 int main(void)
 {
@@ -56,4 +57,6 @@ int main(void)
     advanced_algorithms_example();
 
     strings_example();
+
+    traits_example();
 }
