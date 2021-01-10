@@ -12,6 +12,7 @@
 #include <any>
 #include <list>
 #include <variant>
+#include <memory>
 
 #include "traits.h"
 
@@ -413,6 +414,146 @@ void variant_example()
     }   
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 8: Unique pointer example
+
+/* Unique pointer is introduced in C++11 type of smart pointer. It allows to handle dynamic memor allocation
+with automatic release object, when it is abandoned. That means, that user has not to remember of resources
+and risk of memory leaks is minimal with that.
+
+Moreover, unique pointer can be only one that provides access to an object. That means it cannot be copied, but
+can be moved.
+
+Moreover, unique pointer can be null, and can be used as standerd pointer.
+
+Unique pointers needs no additional resources compairng with standard pointers to work with.
+
+*/
+
+//Helper class
+class Foo
+{
+    public:
+    string name;
+    Foo(string n) : name(n) {
+        cout << "CTOR " << name << endl;
+    }
+    ~Foo() {
+        cout << "DTOR " << name << endl;
+    }
+};
+
+void process_item(unique_ptr<Foo> p)
+{
+    if (!p) {return;}   //Return if p is empty
+    cout << "Processing " << p->name << endl;
+}
+
+void unique_ptr_example()
+{
+    cout << "Unique pointer example\n\n";
+
+    // 2 ways of init unique ptr - by make_unique and directly
+    {
+        unique_ptr<Foo> p1 {new Foo("foo1")};
+        auto p2 = make_unique<Foo>("foo2");
+    }   //Here both foo1 and foo2 will be automatically deleted - exiting the scope
+
+    //Using proces item helper function
+    process_item(make_unique<Foo>("foo3")); //foo3 given to function, so will be deleted when exiting function
+
+    //Move pointer
+    auto p1 (make_unique<Foo>("foo4"));
+    auto p2 (make_unique<Foo>("foo5"));
+    process_item(move(p1));     //Here only foo5 will be deleted exiting function
+    cout << "End of function " << endl;
+    //Foo 4 will be deleted here - exiting of scope
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 9: Shared pointer example
+
+/*
+Shared_prt is type of smart pointers that allows to be copiable. Shared pointers has control block.
+One control block exists for each copy of shared pointer. Each shared pointer referee to object and to control block.
+The control block has counter infirming how many copies of shared pointers we have, and has also reference to object
+pointed. If the counter reaches 0, the control block deletes referee object and otself. Each copyiong of shared_ptr 
+increases the counter.
+
+In the example we will use classes from unique_ptr.
+*/
+
+//Helper function
+void f_shared(shared_ptr<Foo> p)
+{
+    cout << "p: pointer counter is: " << p.use_count() << endl;
+}
+
+void shared_ptr_example()
+{
+    cout << "Shared ptr example \n\n";
+
+    shared_ptr<Foo> p1; //Null shared ptr
+    {
+        cout << "Beginning of interior scope. " << endl;
+        shared_ptr<Foo> p2 {new Foo{"foo1"}};
+        auto p3 {make_shared<Foo>("foo2")};
+        cout << "Use count of foo1 is: " << p2.use_count() << endl; //Use count will be 1
+        p1 = p2;    //Copy
+        cout << "Use count of foo1 is: " << p2.use_count() << endl; //Use count will be 2
+    }   //Here foo1 will be kept, foo2 deleted
+    cout << "Return to main scope" << endl;
+    cout << p1.use_count() << endl;
+
+    cout << "First call of f_shared() " << endl;
+    f_shared(p1);   //Here function will have copy of shared_ptr. Only for life time of function, shared_ptr counter will be 2.
+    cout << "Second call of f_shared()" << endl;
+    f_shared(move(p1)); //Give control of p1 to function, remove p1 content after function scope return
+    cout << "End of scope" << endl;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 10: Weak pointer example
+
+/* Weak pointer is a type of smart pointer that keeps only information about pointed object, but does not allows
+to directly access it. It has to be converted to shared_ptr by lock method before accesing the object. Beacouse it
+does not allows to access directly, making weak pointer dies not increments reference_counter of control block. Moreover, object
+refered by weak pointer can be deleted even if weak pointer still exists. Weak pointer allows to check if object pointed
+is still accesible.
+
+In the example we will use classes from unique_ptr.
+*/
+
+//Heper function
+void weak_ptr_info(const weak_ptr<Foo> &p)
+{
+    cout << "-------------" << boolalpha
+    << "Expired: " << p.expired() << endl       //Informs if object pointed is still accesible
+    << "Use count: " << p.use_count() << endl   //Returns use counter - like for shared_ptr
+    << "Content: " ;
+    if (const auto sp (p.lock()); sp)
+    {
+        cout << sp->name << endl;
+    }else{
+        cout << "nullptr" << endl;
+    }
+}
+
+void weak_pointer_example()
+{
+    cout << "Weak pointer example \n\n";
+
+    weak_ptr<Foo> p1;
+    weak_ptr_info(p1);
+
+    {
+        auto shared_foo (make_shared<Foo>("foo1"));
+        p1 = shared_foo;
+        weak_ptr_info(p1);
+    }   //Leave scope - foo1 will be deleted by shared ptr, but p1 still exists
+    weak_ptr_info(p1);
+}
+
 void traits_example()
 {
     cout << "Traits example! \n\n";
@@ -430,4 +571,10 @@ void traits_example()
     any_example();
 
     variant_example();
+
+    unique_ptr_example();
+
+    shared_ptr_example();
+
+    weak_pointer_example();
 }
