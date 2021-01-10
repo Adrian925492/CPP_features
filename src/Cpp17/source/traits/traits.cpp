@@ -7,6 +7,8 @@
 #include <iomanip>
 #include <optional>
 #include <tuple>
+#include <algorithm>
+#include <numeric>
 
 #include "traits.h"
 
@@ -195,6 +197,79 @@ void tuple_exampel()
     cout << "-------\n";
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 5: Tuple manipulation example
+
+/* In takt recepie we will show advanced tricks of tupe manipulation (concat, counting min, max, average, 
+printing, concat zipping)
+
+One new method will be used: std::tuple_cat(X, Y...) which produces single tuple of tuples X, Y, ... by concating
+it.
+
+*/
+
+//EXAMPLE 1: Printing any tuple
+template<typename T, typename ...Ts>
+void print_tuple(ostream& os, T& v1, Ts& ...vs)
+{
+    os << v1;   //Print 1st element alone (without ", ")
+    (void)initializer_list<int>{((os << ", " << vs),0)...}; //Expand eaxh element of vs (...) to initialize list of elements "os << ", " << vs)"
+}
+
+template<typename ... Ts>
+ostream& operator<< (ostream& os, const tuple<Ts...> &t)
+{
+    auto print_to_os = [&os](const auto &...xs) {
+        print_tuple(os, xs...);     //That lambda will expand tuple t to elements xs and print it to stream os (we will not need to give stream name)
+    };
+    os << "(";
+    apply(print_to_os, t);          //That will call print_to_os with tuple args
+    return os << ")" << endl;
+}
+
+// EXAMPLE 2: MIN, MAX and AVERAGE of tuple
+template <typename T>
+tuple<double, double, double, double>
+sum_min_max_ave(const T& data)
+{
+    auto min_max = minmax_element(data.begin(), data.end());
+    auto sum = accumulate(data.begin(), data.end(), 0.0);
+    return {sum, *min_max.first, *min_max.second, sum / data.size()};
+}
+
+// EXAMPLE 3: ZIP TUPLES
+template<typename Ta, typename Tb>
+static auto zip(const Ta& a, const Tb& b)
+{
+    auto z ([](auto ...xs){     //This lambda will unpack t1 tuple to elements (xs)
+        return [xs...](auto ...ys) {    //This lambda will unpack t2 tuple to elements (ys)
+            return tuple_cat(make_tuple(xs, ys)...);    //Here we have access to each element of t1 and t2 in variadic way
+        };
+    });
+
+    return apply(apply(z, a), b);
+}
+
+void advanced_tuple_example()
+{
+    cout << "Advanced tuple examples \n\n";
+
+    using student_t = tuple<size_t, string, double>;
+    
+    student_t john {123, "John", 3.7};
+    tuple<string, string, string> header {"id", "name", "gid"};
+
+    // Example 1 - printing tuple
+    cout << "Example 1: printing tuples: \n" << header << john;
+
+    //Exmaple 2 - min max ave elemnt
+    auto i = {1.0, 2.0, 3.0, 4.0};
+    cout << "Min max element of the elements {1, 2, 3, 4} [sum, min, max, ave] is: " << sum_min_max_ave(i);
+
+    //Exmaple 3 - zipped tuple
+    cout << "Ziped tuple of " << header << " and " << john << " is " << zip(header, john);
+}
+
 void traits_example()
 {
     cout << "Traits example! \n\n";
@@ -206,4 +281,6 @@ void traits_example()
     optional_example();
 
     tuple_exampel();
+
+    advanced_tuple_example();
 }
