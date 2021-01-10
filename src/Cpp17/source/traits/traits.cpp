@@ -9,6 +9,9 @@
 #include <tuple>
 #include <algorithm>
 #include <numeric>
+#include <any>
+#include <list>
+#include <variant>
 
 #include "traits.h"
 
@@ -270,6 +273,146 @@ void advanced_tuple_example()
     cout << "Ziped tuple of " << header << " and " << john << " is " << zip(header, john);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 6: Using std::any
+
+/* From C++17 standard new type std::any was introduced to replace old style void*, used when
+we want to pass argument of any type. STD::any is more safe.
+*/
+
+ostream& operator<<(ostream& os, const any& data)
+{
+    if(!data.has_value())
+    {
+        return os << "Empty value has been passed. Nothing to display. ";
+    }
+    else if (data.type() == typeid(string))
+    {
+        return os << "String passed: " << any_cast<string>(data);
+    }
+    else if (data.type() == typeid(int))
+    {
+        return os << "Int passed: " << any_cast<int>(data);
+    }
+    else if (data.type() == typeid(list<int>))
+    {
+        os << "List of ints passed: "; 
+        auto l = any_cast<list<int>>(data);
+        for (auto& el : l)
+        {
+            os << el << ", ";
+        }
+        return os;
+    }
+    else {
+        return os << "Type not recognized.";
+    }
+}
+
+void any_example()
+{
+    cout << "Std::any example \n\n";
+    
+    //Prepare data
+    string s = "string";
+    int i = 2;
+    list<int> l{1, 2, 3};
+    double d = 2.3;
+    
+    any a1(s);
+    any a2(i);
+    any a3(d);
+    any a4(l);
+    any a5{};   //Empty any
+
+    cout << "String: " << a1 << endl;
+    cout << "Int: " << a2 << endl;
+    cout << "Double (not recognized): " << a3 << endl;
+    cout << "List: " << a4 << endl;
+    cout << "Empty any: " << a5 << endl;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 7: Variant example
+
+/* In the recepie we will show usage of std::variant type introduced in C++17. It can hold
+elements of one of defined types (like union), but also provides mechanisms for accesing the data
+and checking what exactly type of element is in variant continer. 
+*/
+
+// We will define 2 semantically similar classes, but not connected to each other (no inheritance, common interface etc.)
+class cat{
+    string name;
+public:
+    cat(string n) : name{n} {}
+    void meow() const {
+        cout << name << " mouws!" << endl;
+    }
+};
+
+class dog{
+    string name;
+public:
+    dog(string n) : name{n} {}
+    void woof() const {
+        cout << name << " woofs!" << endl;
+    }
+};
+
+//We will define functor - helper for visitor 
+struct animal_voice
+{
+    void operator() (const dog& x) {x.woof();}
+    void operator() (const cat& x) {x.meow();}    
+};
+
+//Define variant type
+using animal = variant<dog, cat>;
+
+void variant_example()
+{
+    cout << "Variant example \n\n";
+
+    // Define data
+    list<animal> l {cat{"Cat1"}, dog{"Dog1"}, cat{"cat2"}};
+
+    //Usage exmaple 1 - using index()
+    cout << "Printing using index(): " << endl;
+    for (const animal& a : l)
+    {
+        switch (a.index())
+        {
+        case 0:
+            get<dog>(a).woof();
+            break;
+        case 1:
+            get<cat>(a).meow();
+        default:
+            break;
+        }
+    }
+
+    //Usage example 2 - using get if
+    cout << "Printing using get_if(): " << endl;
+    for (const animal& a : l)
+    {
+        if (const auto d (get_if<dog>(&a)); d)
+        {
+            d->woof();
+        } else if (const auto c (get_if<cat>(&a)); c)
+        {
+            c->meow();
+        }
+    }   
+
+    //Usage example 3 - using visit()
+    cout << "Printing using visit(): " << endl;
+    for (const animal& a : l)
+    {
+        visit(animal_voice{}, a);
+    }   
+}
+
 void traits_example()
 {
     cout << "Traits example! \n\n";
@@ -283,4 +426,8 @@ void traits_example()
     tuple_exampel();
 
     advanced_tuple_example();
+
+    any_example();
+
+    variant_example();
 }
