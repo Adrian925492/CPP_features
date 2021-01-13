@@ -554,6 +554,93 @@ void weak_pointer_example()
     weak_ptr_info(p1);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 11: Non standard smart pointers example
+
+/* Assume we have class that cannot be initialized by standard new and delete function (ex. has
+only private constructors and is created by creation methods). In that case it will not be possible to 
+instantiate it by smart pointers.
+
+In the recepie workaround for that is showed.
+*/
+
+//Example class
+class Foo2{
+    string name;
+    Foo2(string n) : name(n) 
+    { 
+        cout << "CTOR " << name << endl;
+    }
+    ~Foo2() 
+    {
+        cout << "DTOR " << name << endl;
+    }
+    public:
+    static Foo2* create_foo2(string s)
+    {
+        return new Foo2{move(s)};
+    }
+    static void destroy_foo2(Foo2* p)
+    {
+        delete p;
+    }
+};
+
+//Create wrapper for making shared and unique Foo2
+// Here we use constructor of shared/unique ptr of type shared_ptr<F> (F*, Delete_function_t)
+// The F* is returned by creatr_foo2 method call. Other arg is just a pointer to function.
+static shared_ptr<Foo2> make_shared_foo2(string s)
+{
+    return {Foo2::create_foo2(move(s)), Foo2::destroy_foo2};
+}
+
+static unique_ptr<Foo2, void(*)(Foo2*)> make_unique_foo2(string s)
+{
+    return {Foo2::create_foo2(move(s)), Foo2::destroy_foo2};
+}
+
+void non_standards_smart_pointers_usage_example()
+{
+    cout << "Non standard smart pointers usage example \n\n";
+    auto sp (make_shared_foo2("Shared foo2 instance"));
+    auto up (make_unique_foo2("Unique foo2 instance"));
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 12: Shared pointer to atribute of larger object
+
+/* In the recepie we will hve large object stored by shared pointer, ant we want to 
+have access to the attribute of that object by shared pointer, but we want that shared ptr
+of the attribute to point to the same control block as object shared pointer. It is possible by
+usage special form of shared_ptr constructor. In that way, if object shared_ptr will be out of scope,
+the large object itself will not be deleted untill its attribute shared_ptr exists.
+*/
+
+struct example_data
+{
+    int a;
+    string b;
+    example_data(int aa, string bb) : a(aa), b(bb) {cout << "CTOR " << a << b << endl;}
+    ~example_data() {cout << "DTOR " << a << b << endl;}
+};
+
+void large_object_attribute_shared_ptr_example()
+{
+    cout << "Large object attribute shared pointer example \n";
+
+    //Prepare shared ptrs
+    shared_ptr<int> p1;
+    shared_ptr<string> p2;    
+
+    //Prepare object
+    {
+        auto p = make_shared<example_data>(2, "example_class");
+        p1 = shared_ptr<int>(p, &p->a);
+        p2 = shared_ptr<string>(p, &p->b);
+    }   //Here scope ends, so object pointed by p would be destroyed, but p1 and p2 prevents from it!
+    cout << "After scope attributes ob object: p1 is " << *p1 << " and p2 is: " << *p2 << endl;
+}
+
 void traits_example()
 {
     cout << "Traits example! \n\n";
@@ -577,4 +664,8 @@ void traits_example()
     shared_ptr_example();
 
     weak_pointer_example();
+
+    non_standards_smart_pointers_usage_example();
+
+    large_object_attribute_shared_ptr_example();
 }
