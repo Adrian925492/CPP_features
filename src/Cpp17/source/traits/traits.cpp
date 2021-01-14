@@ -11,7 +11,11 @@
 #include <numeric>
 #include <any>
 #include <list>
+#include <vector>
+#include <map>
+#include <random>
 #include <variant>
+#include <limits>
 #include <memory>
 
 #include "traits.h"
@@ -641,6 +645,136 @@ void large_object_attribute_shared_ptr_example()
     cout << "After scope attributes ob object: p1 is " << *p1 << " and p2 is: " << *p2 << endl;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 13: Random number generator usage
+
+/* From C++11 standard the STL provides set of random number generator engines for generating PRNG 
+values (and one engine for TRNG if available).
+
+The recepie shows example of using it.
+*/
+
+//Function for generating histogram of values
+template<typename T>
+void histogram(size_t partitions, size_t samples)
+{
+    using rand_t = typename T::result_type;     //Create an alias to rand num generated type
+    partitions = max<size_t>(partitions, 10);   //Limit given amount of partitions to max 10
+
+    T rd;   //Instantiate random number generator
+    rand_t div ((double(T::max()) + 1) / partitions);   //That value will be used for generating normalization (max val of generator per partitions amount)
+    vector<size_t> v (partitions);                 //Instantiate vector for histogram data
+    for (size_t i {0}; i < samples; ++i)
+    {
+        ++v[rd() / div];    //Increment element of vector of id randomly choosen from range 0 - partitions (max 10)
+    }
+
+    rand_t max_elem (*max_element(v.begin(), v.end()));
+    rand_t max_div  (max(max_elem / 100, rand_t(1)));   //Scalling histogram value
+
+    // Print histogram
+    for (size_t i {0}; i < partitions; ++i)
+    {
+        cout << setw(2) << i << ":"
+        << string(v[i] / max_div, '*') << endl;
+    }
+}
+
+void random_number_generator_usage()
+{
+    cout << "Random number generator usage example \n\n";
+
+    //Define nr of samples and partitions
+    size_t partitions {10};
+    size_t samples {1000000};
+
+    //Use engines:
+    cout << "Random device engine: " << endl;
+    histogram<random_device>(partitions, samples);
+
+    cout << "Default random engine: " << endl;
+    histogram<default_random_engine>(partitions, samples);
+
+    cout << "minstd_rand device engine: " << endl;
+    histogram<minstd_rand0>(partitions, samples);
+
+    cout << "minstd_rand0 device engine: " << endl;
+    histogram<minstd_rand>(partitions, samples);
+
+    cout << "mt19937 device engine: " << endl;
+    histogram<mt19937>(partitions, samples);
+
+    cout << "mt19937_64 device engine: " << endl;
+    histogram<mt19937_64>(partitions, samples);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 14: Random number generation with given distribution
+
+/* The STL has defined set of engines that if used with random number generator can
+give a random value with defined distribution of propability. The following example shows 
+couple of commonly used distributions given by STL.
+*/
+
+//Print function - will print distribution of generating given amount of samples
+template<typename T>
+void print_distro(T distro, size_t samples)
+{
+    default_random_engine e;        //Instantiate random engine firts
+    map<int, size_t> m;
+    for (size_t i {0}; i < samples; ++i)
+    {
+        m[distro(e)] += 1;          //Just like in above example - increment amount of generated samples for given value from range
+    }
+
+    size_t max_elem (max_element(m.begin(), m.end(), 
+        [](const auto &a, const auto &b)
+        {
+            return a.second < b.second;
+        })->second);                // Will give max element of generated elements for scalling histogram
+    
+    size_t max_div (max(max_elem/100, size_t(1)));
+
+    //Print results
+    for (const auto [randval, count] : m)
+    {
+        if (count < max_elem / 200) {continue;}      //Counters with very small values will be skipped - to increase readability
+        cout << setw(3) << randval << ":"
+        << string(count / max_div, '*') << endl;
+    }
+}
+
+void distribution_example()
+{
+    cout << "Distribution example \n\n";
+
+    //Define nr of samples and partitions
+    size_t partitions {10};
+    size_t samples {1000000};    
+
+    // Print distributed random elements for different distributions
+    cout << "uniform_int_distribution: " << endl;
+    print_distro(uniform_int_distribution<int>{0, 9}, samples);
+
+    cout << "normal_distribution: " << endl;
+    print_distro(normal_distribution<double>{0.0, 2.0}, samples);
+
+    cout << "bernoulli_distribution: " << endl;
+    print_distro(bernoulli_distribution{0.75}, samples);
+
+    cout << "discrete_distribution: " << endl;
+    print_distro(discrete_distribution<int>{{1, 2, 4, 8}}, samples);
+
+    cout << "piecewise_constant_distribution: " << endl;
+    initializer_list<double> intervals {0, 5, 10, 30};
+    initializer_list<double> weights {0.2, 0.3, 0.5};
+    print_distro(piecewise_constant_distribution<double>{begin(intervals), end(intervals), begin(weights)}, samples);
+
+    cout << "piecewise_linear_distribution: " << endl;
+    initializer_list<double> weights2 {0, 1, 1, 0};
+    print_distro(piecewise_linear_distribution<double>{begin(intervals), end(intervals), begin(weights2)}, samples);
+}
+
 void traits_example()
 {
     cout << "Traits example! \n\n";
@@ -668,4 +802,8 @@ void traits_example()
     non_standards_smart_pointers_usage_example();
 
     large_object_attribute_shared_ptr_example();
+
+    random_number_generator_usage();
+
+    distribution_example();
 }
