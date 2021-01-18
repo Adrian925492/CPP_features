@@ -17,7 +17,8 @@ FROM base_tools as dev_tools
 		apt-get install -y gcc && \
 		apt-get install -y g++ && \
 		apt-get install -y gdb && \
-		apt-get install -y cmake
+		apt-get install -y cmake && \
+		apt-get install -y libtbb-dev
 
 # Code checkers
 FROM dev_tools as checkers_tools
