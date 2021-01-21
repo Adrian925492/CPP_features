@@ -7,6 +7,7 @@
 #include <chrono>
 #include <thread>
 #include <execution>
+#include <shared_mutex>
 #include "parallell_processing.h"
 
 using namespace std;
@@ -109,6 +110,59 @@ void using_threads_example()
     cout << "End of main thread! \n\n";
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 4: Mutex example
+
+/* Mtex class is a mechanism for preventing 2 threads access the same object. In general, mute can have
+locked and unlocked state. If mutex is locked, it means that protected resource is in use and cannot be used. 
+Other thread has to wait for mutex to be unlocked, which means, that reaource is free again.
+*/
+
+// Define global shared mutex
+shared_mutex m;
+
+//Helper functions
+static void print_exclusive()
+{
+    unique_lock<shared_mutex> lock {m, defer_lock};     //Defer lock - constructor will not lock mutex, just create lock
+    if (lock.try_lock()) {  //Try to lock mutex here
+        cout << "Unique lock granted! " << endl;
+    }else{
+        cout << "Unique lock not granted! " << endl;
+    }
+}   //Lock will be released
+
+static void exclusive_throw()
+{
+    unique_lock<shared_mutex> lock {m}; //Try to lock mutex m immidietly
+    throw 123;
+}   //Lock will be released
+
+void mutex_example()
+{
+    cout << "Mutex example\n\n";
+
+    {
+        shared_lock<shared_mutex> lck1(m); //Shared lock on mutex
+        cout << "First shared lock granted! " << endl;
+        {
+            shared_lock<shared_mutex> lck2(m); //2nd shared lock on mutex
+            cout << "Second shared lock granted! " << endl;
+            print_exclusive();   //Try unique lock - will not lock!
+        }   //2nd lock released
+        cout << "Second shared lock released! " << endl;
+        print_exclusive();  //Will not lock - 1st shared lock still active
+    }
+    cout << "First shared lock released! " << endl;
+    try{
+        exclusive_throw();
+    }catch(int e)
+    {
+        cout << "Catched throw " << e << endl;
+    }
+    print_exclusive();  //Will lock
+}
+
 void parallell_processing_example()
 {
     using_policies();
@@ -116,4 +170,6 @@ void parallell_processing_example()
     thread_sleep_example();
 
     using_threads_example();
+
+    mutex_example();
 }
