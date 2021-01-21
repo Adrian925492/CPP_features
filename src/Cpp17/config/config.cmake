@@ -43,5 +43,10 @@ target_compile_features(cpp17_config INTERFACE
 
 # Set compiler flags
 target_compile_options(cpp17_config INTERFACE
-    -pthread
+)
+
+# Set libs to link
+target_link_libraries(cpp17_config INTERFACE
+    pthread
+    tbb
 )
