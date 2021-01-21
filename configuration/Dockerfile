@@ -39,6 +39,8 @@ FROM python_tools as conan_tools
 
 # User image
 FROM conan_tools as user_image
+	RUN git config --global user.name Adrian_Podsiadlowski
+	RUN git config --global user.email adrian.podsiadlowski@gmail.com
 	WORKDIR /repo
 	ENTRYPOINT /bin/bash
 	CMD /
