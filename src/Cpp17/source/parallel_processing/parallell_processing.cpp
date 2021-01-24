@@ -10,6 +10,7 @@
 #include <shared_mutex>
 #include <mutex>
 #include <sstream>
+#include <future>
 #include "parallell_processing.h"
 
 using namespace std;
@@ -301,6 +302,52 @@ void call_once_example()
     cout << endl << endl;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 8: Async eample
+
+/* std::async in a new function introduced in C++11. It allows for asynchronus call of a function
+(in othre thread or in that thread, but lated - that is defined by policy). It allows
+to return value (standar thread usage does not allows it!). The returned value is packed by future object.
+*/
+
+//Define helper functions - will be called by asybc later
+string sort_string(string input)
+{
+    sort(input.begin(), input.end());
+    return input;
+}
+
+string convert_to_upper(string input)
+{
+    transform(input.begin(), input.end(), input.begin(), ::toupper);
+    return input;
+}
+
+string convert_to_lower(string input)
+{
+    transform(input.begin(), input.end(), input.begin(), ::tolower);
+    return input;
+}
+
+void async_example()
+{
+    cout << "Async example \n\n";
+
+    string input = "Ala Ma Kota, a kot ma Ale!";
+
+    //Call functions asynchronically
+    auto o1 = async(launch::async, sort_string, input);
+    auto o2 = async(launch::async, convert_to_upper, input);
+    auto o3 = async(launch::async, convert_to_lower, input);
+
+    cout << "Input string: " << input << endl;
+    cout << "Sorted by async: " << o1.get() << endl;        //As o1, o2, o3 are promise type, we will need .get() to get a result !
+    cout << "Toupper by async: " << o2.get() << endl;
+    cout << "Tolower by async: " << o3.get() << endl;
+
+    cout << endl << endl;
+}
+
 void parallell_processing_example()
 {
     using_policies();
@@ -316,4 +363,6 @@ void parallell_processing_example()
     cout_with_locks();
 
     call_once_example();
+
+    async_example();
 }
