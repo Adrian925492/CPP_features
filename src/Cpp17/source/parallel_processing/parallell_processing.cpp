@@ -11,6 +11,8 @@
 #include <mutex>
 #include <sstream>
 #include <future>
+#include <queue>
+#include <condition_variable>
 #include "parallell_processing.h"
 
 using namespace std;
@@ -348,6 +350,142 @@ void async_example()
     cout << endl << endl;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 9: Producer - consumer example
+
+/* Producer - consuler is an parallell processing design pattern. We have 2 threads - producer, 
+which produces data to process, and consumer which process the data. Both are connected each other by
+queue, which as shared resource, is protected by mutex. If no data are in queue, the consumer
+thread sleeps. If no data is to process, the producer thread sleeps.
+
+In the situation we need some sync mechanism between threads. After putting new data into the queue, the
+produces shall wake up sleeping consumer thread. That is done by introduced in C++11 condition_variable
+class.
+
+*/
+
+mutex queue_mutex;
+queue<size_t> q;
+condition_variable cv;
+bool finished = false;
+
+//Producer and consumer threads
+static void producer_thr(size_t items)
+{
+    for (size_t i = 0; i < items; ++i)
+    {
+        lock_guard<mutex> lk {queue_mutex};
+        cout << "Producer putted data: " << i << endl;
+        q.push(i);
+        cv.notify_all();    //Wake up all threads waiting for cv
+    }
+    {
+        lock_guard<mutex> lk {queue_mutex};
+        finished = true;        //Modify finished variable - has to be also quarded by mutex
+    }
+    cv.notify_all();    //And wake up waiting threads
+}
+
+static void consumer_thr()
+{
+    while(!finished) {
+        unique_lock<mutex> l {queue_mutex};
+        cv.wait(l, [](){return !q.empty() || finished;});   //Wait for cv. If waken up, check predictate - finished variable and if queue is not empty.
+        
+        while(! q.empty())
+        {
+            cout << "Get data from queue: " << q.front() << endl;
+            q.pop();
+        }
+    }
+}
+
+void condition_variable_example()
+{
+    cout << "Condition variable example \n\n";
+
+    thread t1 {producer_thr, 10};
+    thread t2 {consumer_thr};
+
+    t1.join();
+    t2.join();
+
+    cout << "Finished" << endl << endl;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 10: Extended producer - consumer example
+
+/* In that recepie we eill extend producer-consume example by writing code for more than one
+producers and consumers working together, on the same queue. We will add also mechanism for
+protection write ti queue if its size is too high. We will use some code from previour recepies.
+*/
+
+condition_variable go_produce;
+condition_variable go_consume;
+bool production_stopped {false};
+
+// Producer and consumer functions
+static void ext_producer_thr(size_t id, size_t items, size_t stock)
+{
+    for (size_t i = 0; i < items; ++i)
+    {
+        unique_lock<mutex> lock {queue_mutex};
+        go_produce.wait(lock, [&](){return q.size() < stock;}); //CV for waiting for space in queue. Stock defines max queue size.
+        q.push(id * 100 + i);
+        pcout {} << "Producer id: " << id << " putted data: " << i << endl;
+        go_consume.notify_all();    //Notigy consumers
+        this_thread::sleep_for(chrono::milliseconds(90));    //SImulate time for producing data
+    }
+    pcout{} << "End of production by: " << id << endl;
+}
+
+static void ext_consumer_thr(size_t id)
+{
+    while(!production_stopped || !q.empty())
+    {
+        unique_lock<mutex> lock(queue_mutex);
+        if (go_consume.wait_for(lock, chrono::seconds(1), [](){return !q.empty();}))
+        {
+            pcout{} << "Consumer id: " << id << " get data from queue: " << q.front() << endl;
+            q.pop();
+            go_produce.notify_all();    //Notify producers - some data from queue has been processed and we have space
+            this_thread::sleep_for(chrono::milliseconds(120));
+        }
+    }
+    pcout{} << "End of consuming by: " << id << endl;
+}
+
+void extended_producer_consumer_example()
+{
+    cout << "Extended condition variable example \n\n";
+
+    vector<thread> workers;
+    vector<thread> consumers;
+
+    for (size_t x = 0; x < 3; ++x)
+    {
+        workers.emplace_back(ext_producer_thr, x, 15, 5);   //Create 3 producers
+    }
+
+    for (size_t x = 0; x < 2; ++x)
+    {
+        consumers.emplace_back(ext_consumer_thr, x);   //Create 2 consumers
+    }
+
+    for(auto &t : workers)
+    {
+        t.join();
+    }
+    production_stopped = true;
+    for(auto &t : consumers)
+    {
+        t.join();
+    }
+
+    cout << "Finish " << endl << endl;
+}
+
 void parallell_processing_example()
 {
     using_policies();
@@ -365,4 +503,8 @@ void parallell_processing_example()
     call_once_example();
 
     async_example();
+
+    condition_variable_example();
+
+    extended_producer_consumer_example();
 }
