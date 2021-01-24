@@ -163,6 +163,54 @@ void mutex_example()
     print_exclusive();  //Will lock
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 5: Scoped lock example
+
+/* Scoped lock is a special type of lock intriduced in Cpp17 for eliminating problem of deadlocks.
+The scoped lck acts like a normal lock, but the scoped lock can accept many mutexes to lock on.
+The mutexes will be locked as given in constructor, but the lock uses mechanism that prevents from deadlocks.
+
+Deadlock - let assume we have thread 1 that locked mutex A and thtrad 2 that locked mutex B. If, after locking
+mutex A by t1 we have context switching, t2 wil lock mutex B and try lock mutex A, which is already locked by t1. So
+we have context switching again, and we go into t1 which tries to lock mutex B - locked by t2. And we have deadlock.
+
+The deadlocks occurs when programmers locks many mutees in diffrent sequention in many threads. Scoped lock soves the problem.
+
+*/
+
+void scoped_lock_example()
+{
+    cout << "Scoped lock example \n\n";
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 6: Cout with locks
+
+/* In the recepie we will write thread safe version of cout. We will pack sstream class by other class
+acting like a lock using inheritance. The destructor of the pack class will cout all strema data at once, and
+it will be safed by mutex, so we will have no problems with resource access.
+*/
+
+void cout_with_locks()
+{
+    cout << "Cout with locks eample \n\n";
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 7: Call once example
+
+/* The call_once method is a mechanism that allows many threads shares same code, bot in situation, when 
+some config function has to be executed before 1st thread uses the code. The call_once will take care about it automatically, 
+so the user will not have to know which thread would be the first to execute the config function before.
+*/
+
+void call_once_example()
+{
+    cout << "Call once example \n\n";
+
+}
+
 void parallell_processing_example()
 {
     using_policies();
@@ -172,4 +220,10 @@ void parallell_processing_example()
     using_threads_example();
 
     mutex_example();
+
+    scoped_lock_example();
+
+    cout_with_locks();
+
+    call_once_example();
 }

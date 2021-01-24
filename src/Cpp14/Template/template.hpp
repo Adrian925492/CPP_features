@@ -65,8 +65,9 @@ template <typename Head, typename ...Tail>
 void variadicTemplate (Head head, Tail... a)
 {
 	cout << "Variadic template test: \n";
-	cout << head << "  ";
-	(print(a), ...);
+    cout << std::forward<Head>(head);
+    using expander = int[];		//Expands variadic args to standard table (try with initializer_list !)
+    (void)expander{0, (void(cout << ',' << std::forward<Tail>(a)), 0)...};
 	cout << endl;
 }
 
