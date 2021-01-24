@@ -8,6 +8,8 @@
 #include <thread>
 #include <execution>
 #include <shared_mutex>
+#include <mutex>
+#include <sstream>
 #include "parallell_processing.h"
 
 using namespace std;
@@ -47,6 +49,7 @@ void using_policies()
     generate(execution::par, v.begin(), v.end(), rand_num);
     const auto t22 = chrono::steady_clock::now();
     cout << "FINISH! in " << (t22 - t21).count() << " seconds" << endl;
+    cout << endl << endl;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,7 +71,7 @@ void thread_sleep_example()
 
     this_thread::sleep_until(chrono::steady_clock::now() + chrono::seconds(5));
 
-    cout << "Wakeup! \n";
+    cout << "Wakeup! \n\n";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -161,6 +164,7 @@ void mutex_example()
         cout << "Catched throw " << e << endl;
     }
     print_exclusive();  //Will lock
+    cout << endl << endl;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -178,10 +182,34 @@ The deadlocks occurs when programmers locks many mutees in diffrent sequention i
 
 */
 
+mutex m1;
+mutex m2;
+
+//Helper functions
+void deadlock_f1()
+{
+    scoped_lock l {m1, m2};            //Scoped lock - prevents deadlock: m1 before m2
+    cout << "Taking mutex m1 by func1 \n";
+    cout << "Taking mutex m2 by func1 \n";
+}
+
+void deadlock_f2()
+{
+    scoped_lock l {m2, m1};            //Scoped lock - prevents deadlock: m2 before m1
+    cout << "Taking mutex m2 by func2 \n";
+    cout << "Taking mutex m1 by func2 \n";
+}
+
 void scoped_lock_example()
 {
     cout << "Scoped lock example \n\n";
 
+    thread t1 {deadlock_f1};
+    thread t2 {deadlock_f2};
+
+    t1.join();
+    t2.join();
+    cout << endl << endl;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -192,9 +220,48 @@ acting like a lock using inheritance. The destructor of the pack class will cout
 it will be safed by mutex, so we will have no problems with resource access.
 */
 
+//Pack class
+struct pcout : public stringstream {
+    static inline mutex m;  //Cout protecting mutex
+    ~pcout() {
+        lock_guard<mutex> {m};
+        cout << rdbuf();
+        cout.flush();
+    }
+};
+
+//Thread functions
+static void print_cout(int x)
+{
+    cout << "Call normal cout from: " << x << "\n";
+}
+
+static void print_pcout(int x)
+{
+    pcout{} << "Call protected parallell cout from: " << x << "\n";
+}
+
 void cout_with_locks()
 {
     cout << "Cout with locks eample \n\n";
+
+    //Use standard cout
+    vector<thread> t;
+    for (size_t i {0}; i < 10; ++i)
+    {
+        t.emplace_back(print_cout, i);
+    }
+    for (auto &thr : t) {thr.join();}
+
+    cout << "====================================\n";
+    //Use parallell cout
+    vector<thread> pt;
+    for (size_t i {0}; i < 10; ++i)
+    {
+        pt.emplace_back(print_pcout, i);
+    }
+    for (auto &thr : pt) {thr.join();}
+    cout << endl << endl;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -205,10 +272,33 @@ some config function has to be executed before 1st thread uses the code. The cal
 so the user will not have to know which thread would be the first to execute the config function before.
 */
 
+//Onceflag
+once_flag callflag;
+
+//Function to be called once before threads
+void call_once_func()
+{
+    cout << "!";
+}
+
+//Thread using call_once fcn
+void thr_foo(int x)
+{
+    call_once(callflag, call_once_func);
+    cout << x;
+}
+
 void call_once_example()
 {
     cout << "Call once example \n\n";
 
+    vector<thread> t;
+    for (size_t i {0}; i < 10; ++i)
+    {
+        t.emplace_back(thr_foo, i);
+    }
+    for (auto &thr : t) {thr.join();}
+    cout << endl << endl;
 }
 
 void parallell_processing_example()
