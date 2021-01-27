@@ -16,6 +16,7 @@
 #include <queue>
 #include <condition_variable>
 #include <complex>
+#include <iomanip>
 #include "parallell_processing.h"
 
 using namespace std;
@@ -563,6 +564,101 @@ void parallell_mandelbort_example()
     cout << endl << endl;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// RECEPIE 12: Parallell programming with future example
+
+/* In the recepie we will create parallell version of some job 8
+
+We will also use pcout{} from one of the previous recepies.
+
+*/
+
+//Job functions. Additional delays will simulate complexity of functions.
+
+//1st function - create string
+static string create(const char *s)
+{
+    pcout{} << "3s CREATE " << quoted(s) << '\n';
+    this_thread::sleep_for(chrono::milliseconds(3000));
+    return {s};
+}
+
+//2nd function - concat 2 strings
+static string concat(const string &a, const string &b)
+{
+    pcout{} << "5s CONCAT STRINGS: " << a << " and " << b << '\n';
+    this_thread::sleep_for(chrono::milliseconds(5000));
+    return a + b;
+}
+
+//3rd function - double given string
+static string twice(const string &s)
+{
+    pcout{} << "2s DOUBLE STRING: " << s << '\n';
+    this_thread::sleep_for(chrono::milliseconds(2000));
+    return s + s;
+}
+
+//This functions will pack series functions into parallell versions
+
+//1st of them is asynchronize, which will create callable object of async version of some worker function (the one that needs non future type args)
+//That tyoe of sunctions can be used at the end of call chain only.
+template <typename F>
+static auto asynchronize(F f)
+{
+    return [f](auto ...xs){     //The asynchronize function will return callable objects, which takes any list of args
+        return [=] () {         //Which will return callable object, non - args
+            return async(launch::async, f, xs...);  //Which will call function f with args asynchonically and return retval of f
+        };
+    };
+}
+
+//That 2 functions will allow us to pack functions that takes future objects and returns future objects.
+template<typename F>
+static auto fut_unwrap(F f)
+{
+    return [f](auto ...xs) {    //The fut_unwrap will return callable object, which takes any long list of args of future type
+        return f(xs.get()...);      //Which called will call f function with args stored in future objects
+    };
+}
+
+template<typename F>
+static auto async_adapter(F f)
+{
+    return [f](auto ...xs) {    //The async_adapter function will return callable object, which accepts any number of future type args
+        return [=](){           //Which will return non-argument callable object, which will call given operation asynchronically/
+            return async(launch::async, fut_unwrap(f), xs()...);    //The fun_unwrap used here will pack given standard type args of f function to callable object taking s args of future types (we have .get())
+        };
+    };
+}
+
+void parallel_usage_example()
+{
+    cout << "Parallell usage example \n\n";
+
+    //Create parallell versions of standard functions
+    auto pcreate (asynchronize(create));
+    auto pconcat (async_adapter(concat));
+    auto ptwice  (async_adapter(twice));
+
+    auto result (
+        pconcat(
+            ptwice (
+                pconcat(
+                    pcreate("foo "),
+                    pcreate("bar ")
+                )
+            ),
+            pconcat(
+                pcreate("this "),
+                pcreate("that ")
+            )
+        )
+    );
+
+    cout << "Results: " << result().get() << endl << endl;
+
+}
 
 void parallell_processing_example()
 {
@@ -587,4 +683,6 @@ void parallell_processing_example()
     extended_producer_consumer_example();
 
     parallell_mandelbort_example();
+
+    parallel_usage_example();
 }
