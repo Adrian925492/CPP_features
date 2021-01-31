@@ -18,6 +18,7 @@ add_subdirectory(advanced_algorithms)
 add_subdirectory(strings)
 add_subdirectory(traits)
 add_subdirectory(parallel_processing)
+add_subdirectory(file_systems)
 
 # Define project name
 project(Cpp17 VERSION 1.0.0)
@@ -46,4 +47,5 @@ target_link_libraries(
         string_recepies
         traits_recepies
         parallell_processing_recepies
+        file_systems_recepies
 )

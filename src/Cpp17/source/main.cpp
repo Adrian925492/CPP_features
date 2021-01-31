@@ -20,6 +20,7 @@
 #include "strings/strings.h"
 #include "traits/traits.h"
 #include "parallel_processing/parallell_processing.h"
+#include "file_systems/file_systems.h"
 
 int main(void)
 {
@@ -62,4 +63,6 @@ int main(void)
     traits_example();
 
     parallell_processing_example();
+
+    file_systems_example();
 }
