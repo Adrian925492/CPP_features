@@ -7,6 +7,7 @@ add_library(file_systems_recepies STATIC file_systems.cpp file_systems.h)
 add_executable(file_systems_grep grep.cpp)
 add_executable(file_systems_changer file_changer.cpp)
 add_executable(file_systems_ls ls_tool.cpp)
+add_executable(file_systems_sizer_stats filesizes_stats.cpp)
 
 # Link config library
 target_link_libraries(
@@ -29,6 +30,12 @@ target_link_libraries(
 
 target_link_libraries(
     file_systems_ls
+    PRIVATE
+        cpp17_config
+)
+
+target_link_libraries(
+    file_systems_sizer_stats
     PRIVATE
         cpp17_config
 )
