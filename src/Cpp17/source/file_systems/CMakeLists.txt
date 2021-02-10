@@ -8,6 +8,7 @@ add_executable(file_systems_grep grep.cpp)
 add_executable(file_systems_changer file_changer.cpp)
 add_executable(file_systems_ls ls_tool.cpp)
 add_executable(file_systems_sizer_stats filesizes_stats.cpp)
+add_executable(file_system_cleaner file_cleaner.cpp)
 
 # Link config library
 target_link_libraries(
@@ -36,6 +37,12 @@ target_link_libraries(
 
 target_link_libraries(
     file_systems_sizer_stats
+    PRIVATE
+        cpp17_config
+)
+
+target_link_libraries(
+    file_system_cleaner
     PRIVATE
         cpp17_config
 )
