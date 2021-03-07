@@ -44,6 +44,7 @@ target_compile_features(cpp17_config INTERFACE
 # Set compiler flags
 target_compile_options(cpp17_config INTERFACE
     -fconcepts
+    -g
 )
 
 # Set libs to link
