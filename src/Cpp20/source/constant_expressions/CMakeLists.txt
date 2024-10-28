@@ -3,10 +3,13 @@
 # It is good practice to keep it in all CMakeLists.txt files in the structure
 cmake_minimum_required(VERSION 3.14)
 
-# project
-project(CppFeatures)
+add_library(constant_expressions STATIC constant_expressions.cpp)
 
-# add subdirs
-add_subdirectory(Cpp14)
-add_subdirectory(Cpp17)
-add_subdirectory(Cpp20)
+target_include_directories(constant_expressions PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+# Link config library
+target_link_libraries(
+    constant_expressions
+    PRIVATE
+        cpp20_config
+)

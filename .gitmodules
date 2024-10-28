@@ -1,3 +1,8 @@
 [submodule "src/Cpp17/framework/googletest"]
 	path = src/Cpp17/framework/googletest
 	url = https://github.com/google/googletest.git
+[submodule "googletest"]
+	path = googletest
+	url = https://github.com/google/googletest.git
+[submodule "src/Cpp20/framework/googletest"]
+	url = https://github.com/google/googletest.git src/Cpp20/framework/googletest/
