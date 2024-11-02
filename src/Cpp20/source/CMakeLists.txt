@@ -4,6 +4,7 @@
 cmake_minimum_required(VERSION 3.14)
 
 add_subdirectory(constant_expressions)
+add_subdirectory(move_semantic)
 
 # Define project name
 project(Cpp20 VERSION 1.0.0)
@@ -19,6 +20,7 @@ target_link_libraries(
     PRIVATE
         cpp20_config
         constant_expressions
+        move_semantic
 )
 
 add_custom_command(

@@ -72,7 +72,7 @@ private:
 };
 
 void constexpr_main() {
-    std::cout << "Constant expressions \n";
+    std::cout << "-------- Constant expressions --------\n";
 
     //COnstexpr lambda [since C++20]
     constexpr auto arraySize_l = [](){
