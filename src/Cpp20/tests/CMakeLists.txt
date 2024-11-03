@@ -13,16 +13,16 @@ project(Cpp20_tests)
 add_executable(
     Cpp20_tests
     test.cpp
-
 )
 
 target_link_libraries(
     Cpp20_tests
+    INTERFACE
+        cpp20_config   
     PRIVATE
         gtest
         gmock
         gmock_main
-        cpp20_config   
 )
 
 # add_test()

@@ -3,6 +3,9 @@
 # It is good practice to keep it in all CMakeLists.txt files in the structure
 cmake_minimum_required(VERSION 3.14)
 
+# Include the FetchContent module
+include(FetchContent)
+
 # Define project name
 project(Cpp20 VERSION 1.0.0)
 
@@ -26,6 +29,13 @@ add_subdirectory(source)
 
 # Include test subdirectory
 if(BUILD_TESTING)
+    # Declare and fetch GoogleTest
+    FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG release-1.12.1
+    )
+    FetchContent_MakeAvailable(googletest)
+
     add_subdirectory(tests)
-    add_subdirectory(framework/googletest)
 endif()

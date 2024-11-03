@@ -31,12 +31,12 @@ FROM dev_tools as checkers_tools
 FROM checkers_tools as python_tools
 	RUN apt-get update && \
 		apt-get install -y python3 && \
-		apt-get install -y python3-pip
+		apt-get install -y python3-pip && \
+		apt-get install -y python3.12-venv
 
 # Conan package manager
 FROM python_tools as conan_tools
-	RUN pip3 install conan
-
+	RUN /bin/bash -c "python3 -m venv myenv && source myenv/bin/activate && pip install conan"
 # User image
 FROM conan_tools as user_image
 	RUN git config --global user.name Adrian_Podsiadlowski

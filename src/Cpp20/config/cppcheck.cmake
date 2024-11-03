@@ -7,7 +7,7 @@
 cmake_minimum_required(VERSION 3.14)
 
 # Find (using glob :( ) all source files for check)
-file(GLOB_RECURSE ALL_SOURCE_FILES ${CMAKE_SOURCE_DIR}/Cpp17/source/*.cpp ${CMAKE_SOURCE_DIR}/Cpp17/source/*.h)
+file(GLOB_RECURSE ALL_SOURCE_FILES ${CMAKE_SOURCE_DIR}/Cpp20/source/*.cpp ${CMAKE_SOURCE_DIR}/Cpp20/source/*.h)
 
 message(STATUS "CppCheck enabled")
 message(STATUS "Source files for cppcheck processing: ${ALL_SOURCE_FILES}")
@@ -17,7 +17,7 @@ add_custom_target(
         cppcheck
         COMMAND /usr/bin/cppcheck
         --enable=all
-        --std=c++17
+        --std=c++20
         --library=qt.cfg
         --verbose
         --quiet

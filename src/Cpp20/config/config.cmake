@@ -2,6 +2,7 @@
 # At least one for project, in top-level CMake lists.txt required.
 # It is good practice to keep it in all CMakeLists.txt files in the structure
 cmake_minimum_required(VERSION 3.14)
+include(CMakePrintHelpers)
 
 message(STATUS "CMAKE_SOURCE_DIR            = ${CMAKE_SOURCE_DIR}")
 message(STATUS "CMAKE_BINARY_DIR            = ${CMAKE_BINARY_DIR}")
@@ -21,13 +22,17 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # Compiler setting
-set (CMAKE_CXX_STANDARD 17)
+set (CMAKE_CXX_STANDARD 20)
+message(STATUS "CXX_STANDARD                = ${CMAKE_CXX_STANDARD}")
+
+#Pre-defined way of printing standard cmake variable. To do that - include CMakePrintHelpers.
+cmake_print_variables(CMAKE_CXX_STANDARD)
 
 # Turn on error when compiler standard not satisfied
-set (CMAKE_CXX_STANDARD_REQUIRED ON)
+set (CMAKE_CXX_STANDARD_REQUIRED YES)
 
 # Disable compile standard-specific extensions
-set (CMAKE_CXX_EXTENSIONS OFF)
+set (CMAKE_CXX_EXTENSIONS NO)
 
 # Sanitizers flag for GCC
 # set(CMAKE_CXX_FLAGS -D_GLIBCXX_DEBUG)
