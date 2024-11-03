@@ -1,6 +1,7 @@
 #include "move_semantic.hpp"
 
 #include <iostream>
+#include <cstdint>
 
 int exampleData{14};
 
