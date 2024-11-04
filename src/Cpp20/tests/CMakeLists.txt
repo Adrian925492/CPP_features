@@ -25,4 +25,8 @@ target_link_libraries(
         gmock_main
 )
 
-# add_test()
+# Enable testing
+enable_testing()
+
+# Add the test to CTest
+add_test(NAME Cpp20_tests COMMAND Cpp20_tests)
