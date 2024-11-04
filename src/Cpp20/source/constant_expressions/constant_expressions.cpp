@@ -11,14 +11,24 @@ As constexpr we can use:
 
 */
 
+//consteval function and constinit variable
+constinit size_t total_max_size = 5;
+
+consteval size_t absolute_max_size(size_t s)
+{
+    if (s > 20)
+        return 20;
+    return s;
+}
+
 //Standard compile-time constexpr literal type [c++11]
 constexpr size_t array_size = 6;
 
 //constexpr function [c++11]. Since [c++14] the functions may use local variables and loops. The cpp14 stardard also allow more than one return statements from constexpr functions (methods).
 constexpr size_t is_size_ok(size_t s)
 {
-    if (s > 5)
-        return 5;
+    if (s > total_max_size)
+        return total_max_size;
     return s;
 }
 
@@ -80,6 +90,7 @@ void constexpr_main() {
     };
 
     std::cout << "Standard const expressions: " << array_size << "\n";
+    std::cout << "Consteval method call: " << absolute_max_size(128) << "\n";
     std::cout << "Constexpr function: " << is_size_ok(14) << "\n";
     std::cout << "Class constant expression: " << ArrayMaxSize{4}.get_size() << "\n";
     std::cout << "Inherrited class constant expression: " << ArrayMinMaxSize{4}.get_size() << "\n";
