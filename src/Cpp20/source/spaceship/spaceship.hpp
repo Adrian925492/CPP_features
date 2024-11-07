@@ -1,0 +1,1 @@
+void spaceship_main();

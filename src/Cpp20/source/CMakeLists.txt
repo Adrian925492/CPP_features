@@ -6,6 +6,7 @@ cmake_minimum_required(VERSION 3.14)
 add_subdirectory(constant_expressions)
 add_subdirectory(move_semantic)
 add_subdirectory(multilang_string)
+add_subdirectory(spaceship)
 
 # Define project name
 project(Cpp20 VERSION 1.0.0)
@@ -23,6 +24,7 @@ target_link_libraries(
         constant_expressions
         move_semantic
         multilang_string
+        spaceship
 )
 
 add_custom_command(
