@@ -3,13 +3,15 @@
 # It is good practice to keep it in all CMakeLists.txt files in the structure
 cmake_minimum_required(VERSION 3.18)
 
-add_library(move_semantic STATIC move_semantic.cpp)
+add_subdirectory(example_module)
 
-target_include_directories(move_semantic PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+add_library(modules STATIC modules.cpp)
+
+target_include_directories(modules PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Link config library
 target_link_libraries(
-    move_semantic
+    modules
     PRIVATE
         cpp20_config
 )

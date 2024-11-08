@@ -1,7 +1,7 @@
 # Defines version of the CMake - some of features are not backward compatiblem thus it is needed here. 
 # At least one for project, in top-level CMake lists.txt required.
 # It is good practice to keep it in all CMakeLists.txt files in the structure
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.18)
 include(CMakePrintHelpers)
 
 message(STATUS "CMAKE_SOURCE_DIR            = ${CMAKE_SOURCE_DIR}")
@@ -50,6 +50,7 @@ target_compile_features(cpp20_config INTERFACE
 target_compile_options(cpp20_config INTERFACE
     -fconcepts
     -g
+    -fmodules-ts
 )
 
 # Set libs to link

@@ -2,6 +2,7 @@
 #include <move_semantic.hpp>
 #include <multilang_string.hpp>
 #include <spaceship.hpp>
+#include <modules.hpp>
 
 #include <iostream>
 
@@ -13,4 +14,5 @@ int main(void)
     move_main();
     multilang_string_main();
     spaceship_main();
+    modules_main();
 }
