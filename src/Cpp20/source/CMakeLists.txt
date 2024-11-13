@@ -8,6 +8,7 @@ add_subdirectory(move_semantic)
 add_subdirectory(multilang_string)
 add_subdirectory(spaceship)
 add_subdirectory(modules)
+add_subdirectory(concepts)
 
 # Define project name
 project(Cpp20 VERSION 1.0.0)
@@ -27,6 +28,7 @@ target_link_libraries(
         multilang_string
         spaceship
         modules
+        concepts
 )
 
 add_custom_command(

@@ -3,6 +3,7 @@
 #include <multilang_string.hpp>
 #include <spaceship.hpp>
 #include <modules.hpp>
+#include <concepts.hpp>
 
 #include <iostream>
 
@@ -15,4 +16,5 @@ int main(void)
     multilang_string_main();
     spaceship_main();
     modules_main();
+    concepts_main();
 }
