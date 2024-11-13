@@ -4,6 +4,9 @@
 #include <cstdint>
 #include <concepts>
 
+#include <vector>
+#include <iterator>
+
 //Some part of default concepts are provided by std lib. Full list of concepts that are able to be used are in https://en.cppreference.com/w/cpp/concepts.
 
 //Example struct using default defined in std
@@ -109,13 +112,52 @@ struct MyClass
     T cls;
 };
 
-struct HasFoo {
+struct HasFooBar {
     int foo(int x)
     {
         return x;
     }
+
+    int bar()
+    {
+        return 112;
+    }
 };
 
+//In-place comcept - possible, but BAD PRACTICE
+template <typename T>
+requires requires(T type) { {type.bar()}; } //Checks if type T has method foo()
+struct InPlaceConcept {
+    T cls;
+};
+
+//Concept example - checks if type is container
+template <typename S>
+concept IsContainer = requires(S _s) {
+    { _s.begin() } -> std::input_or_output_iterator;
+    { _s.end() } -> std::input_or_output_iterator;
+   
+};
+
+template <IsContainer T>
+struct Cont {
+    T _cont{};
+};
+
+//Function concept based overload - we provide 2 implementations of tempalte functions fcn1 with 2 diferrent concepts.
+template <std::same_as<uint32_t> T>
+int fcn1(T x)
+{
+    std::cout << "u32: ";
+    return static_cast<int>(x);
+}
+
+template <std::same_as<uint16_t> T>
+int fcn1(T x)
+{
+    std::cout << "u16: ";
+    return static_cast<int>(x);
+}
 
 
 void concepts_main()
@@ -137,5 +179,12 @@ void concepts_main()
 
     std::cout << "Default concepts: Is predictate: " << Predictate<Pred>{}.pred(2) << "\n";
 
-    std::cout << "Own concept - checks if type is not a pointer and has callable foo method " << MyClass<HasFoo>{}.cls.foo(23) << "\n";
+    std::cout << "Own concept - checks if type is not a pointer and has callable foo method " << MyClass<HasFooBar>{}.cls.foo(23) << "\n";
+    std::cout << "Own in-place concept - checks if type has callable foo method " << InPlaceConcept<HasFooBar>{}.cls.bar() << "\n";
+    
+    std::cout << "Own concept - checks if type is a container " << Cont<std::vector<int>>{{1, 2, 3}}._cont.at(0) << "\n";
+
+    uint16_t u16{16};
+    uint32_t u32{32};
+    std::cout << "Concept overload: fcn1() for uint16_t " << fcn1(u16) << " and for uint32_t " << fcn1(u32) << "/n";
 }
