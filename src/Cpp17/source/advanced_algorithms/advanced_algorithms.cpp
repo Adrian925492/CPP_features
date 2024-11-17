@@ -9,6 +9,8 @@
 #include <vector>
 #include <cmath>
 #include <list>
+#include <optional>
+#include <functional>
 #include "advanced_algorithms.h"
 
 using namespace std;

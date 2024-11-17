@@ -660,6 +660,33 @@ void parallel_usage_example()
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// ADDITIONAL 1: thread_local example
+// thread_local specifier is used to inform compilet to produce separate instance of statically allocated resource for each thread that would use that.
+// With that policy we avoid using shared resource by many threads.
+
+struct Data {
+    thread_local static int data;
+};
+
+thread_local int Data::data = 2;
+
+void thread_local_example() {
+    cout << "Thread local example \n\n";
+
+    auto thread_fcn = [](const int i){
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        Data oData;
+        cout << "Thread " << i << " data: " << oData.data << " with address: " << &(oData.data) << "\n";
+    };
+
+    thread t1(thread_fcn, 1);
+    thread t2(thread_fcn, 2);
+
+    t1.join();
+    t2.join();
+}
+
 void parallell_processing_example()
 {
     using_policies();
@@ -685,4 +712,6 @@ void parallell_processing_example()
     parallell_mandelbort_example();
 
     parallel_usage_example();
+
+    thread_local_example();
 }

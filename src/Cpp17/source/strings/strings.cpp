@@ -14,6 +14,8 @@
 #include <numeric>
 #include <unordered_map>
 #include <regex>
+#include <limits>
+#include <cstring>
 #include <system_error>
 #include "strings.h"
 
@@ -124,7 +126,7 @@ void cin_example()
         cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  //Will clear cin buffer untill last '\n' sign.
     }
 
-    cout << "Type name and surname: ";
+    cout << "Type [name, surname]: ";
     string name;
     getline(cin >> ws, name, ',');  //Getline will set up separator, and cin >> ws will remove spaces around name and surname
     if (name.empty())
