@@ -52,8 +52,8 @@ target_link_libraries(
 
 add_custom_command(
     TARGET Cpp17
+    POST_BUILD
     COMMAND ${CMAKE_OBJCOPY} ARGS --only-keep-debug ${EXECUTABLE_OUTPUT_PATH}/Cpp17 ${EXECUTABLE_OUTPUT_PATH}/Cpp17.debug
     COMMAND strip ARGS -g ${EXECUTABLE_OUTPUT_PATH}/Cpp17
     COMMAND ${CMAKE_OBJCOPY} ARGS --add-gnu-debuglink=${EXECUTABLE_OUTPUT_PATH}/Cpp17.debug ${EXECUTABLE_OUTPUT_PATH}/Cpp17
-    DEPENDS ${EXECUTABLE_OUTPUT_PATH}/Cpp17
 )

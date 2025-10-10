@@ -14,21 +14,25 @@ FROM base_tools AS dev_tools
 	ARG DEBIAN_FRONTEND=noninteractive
 	RUN apt-get update && \
 		apt-get install -y git && \
-		apt-get install -y gcc-11 && \
-		apt-get install -y g++-11 && \
+		apt-get install -y software-properties-common && \
+		# Add PPA for GCC 13
+		add-apt-repository ppa:ubuntu-toolchain-r/test && \
+		apt-get update && \
+		apt-get install -y gcc-13 && \
+		apt-get install -y g++-13 && \
 		apt-get install -y gdb && \
 		apt-get install -y wget && \
 		apt-get install -y build-essential && \
 		apt-get install -y libtbb-dev && \
 		# Install CMake 3.24+ from Kitware repository
-		apt-get install -y software-properties-common lsb-release gpg && \
+		apt-get install -y lsb-release gpg && \
 		wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null && \
 		apt-add-repository "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main" && \
 		apt-get update && \
 		apt-get install -y cmake && \
-		# Set GCC 11 as default
-		update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 60 && \
-		update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 60
+		# Set GCC 13 as default
+		update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 60 && \
+		update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 60
 
 # Code checkers
 FROM dev_tools AS checkers_tools

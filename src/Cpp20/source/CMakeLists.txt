@@ -33,8 +33,8 @@ target_link_libraries(
 
 add_custom_command(
     TARGET Cpp20
+    POST_BUILD
     COMMAND ${CMAKE_OBJCOPY} ARGS --only-keep-debug ${EXECUTABLE_OUTPUT_PATH}/Cpp20 ${EXECUTABLE_OUTPUT_PATH}/Cpp20.debug
     COMMAND strip ARGS -g ${EXECUTABLE_OUTPUT_PATH}/Cpp20
     COMMAND ${CMAKE_OBJCOPY} ARGS --add-gnu-debuglink=${EXECUTABLE_OUTPUT_PATH}/Cpp20.debug ${EXECUTABLE_OUTPUT_PATH}/Cpp20
-    DEPENDS ${EXECUTABLE_OUTPUT_PATH}/Cpp20
 )
