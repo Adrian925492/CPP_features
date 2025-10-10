@@ -1,3 +1,40 @@
-# Blacklist selected directories
-build
-output
+# Build directories (common patterns)
+build/
+build*/
+builds/
+Build/
+BUILD/
+*build/
+*build*/
+*builds/
+
+# Output directories
+output/
+out/
+bin/
+lib/
+
+# CMake generated files and directories
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakeLists.txt
+!*.cmake
+
+# Debug and Release directories (Visual Studio style)
+Debug/
+Release/
+RelWithDebInfo/
+MinSizeRel/
+
+# IDE specific build folders
+.vs/
+.vscode/build/
+.idea/cmake-build-*/
+
+# Temporary and cache directories
+.cache/
+temp/
+tmp/
