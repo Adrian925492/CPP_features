@@ -4,6 +4,7 @@
 #include <spaceship.hpp>
 #include <modules.hpp>
 #include <concepts.hpp>
+#include <idioms.hpp>
 
 #include <iostream>
 
@@ -17,4 +18,5 @@ int main(void)
     spaceship_main();
     modules_main();
     concepts_main();
+    idioms_main();
 }

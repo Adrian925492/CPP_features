@@ -186,5 +186,5 @@ void concepts_main()
 
     uint16_t u16{16};
     uint32_t u32{32};
-    std::cout << "Concept overload: fcn1() for uint16_t " << fcn1(u16) << " and for uint32_t " << fcn1(u32) << "/n";
+    std::cout << "Concept overload: fcn1() for uint16_t " << fcn1(u16) << " and for uint32_t " << fcn1(u32) << "\n";
 }

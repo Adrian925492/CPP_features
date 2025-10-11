@@ -1,0 +1,233 @@
+#include "idioms.hpp"
+#include <iostream>
+
+//1. RAII idiom - usage of constructors and destructors to manage resource allocation and deallocation. Based on calling destructor automatically when an object goes out of scope.
+class RAII {
+public:
+    RAII() { std::cout << "Resource acquired\n"; }
+    ~RAII() { std::cout << "Resource released\n"; }
+};
+
+void raii_example() {
+    {
+        std::cout << "1. RAII example:\n";
+        RAII resource; // Resource is acquired here
+    } // Resource is released automatically when going out of scope
+}
+
+//2. Non-copyable idiom - prevent copying of objects by deleting copy constructor and copy assignment operator.
+class NonCopyable {
+public:
+    NonCopyable() = default;
+    NonCopyable(const NonCopyable&) = delete; // Delete copy constructor
+    NonCopyable& operator=(const NonCopyable&) = delete; // Delete copy assignment
+    NonCopyable(NonCopyable&&) = default; // Allow move constructor
+    NonCopyable& operator=(NonCopyable&&) = default; // Allow move assignment
+};
+
+void non_copyable_example() {
+    std::cout << "2. Non-Copyable example:\n";
+    NonCopyable obj1;
+    // NonCopyable obj2 = obj1; // Error: copy constructor is deleted
+    NonCopyable obj3 = std::move(obj1); // OK: move constructor is allowed
+};
+
+//3. Hidden friend idiom - allows a class to declare another class or function as a friend without exposing the friendship in the public interface.
+class HiddenFriend {
+public:
+    int value;
+    HiddenFriend(int v) : value(v) {}
+private:
+    friend void reveal_value(const HiddenFriend& hf);   // Declare friend function - as private.
+};
+
+void reveal_value(const HiddenFriend& hf) {     // Friend function definition - out of scope of class
+    std::cout << "HiddenFriend value: " << hf.value << std::endl;
+}
+
+//ADL usage example - Argument Dependent Lookup
+// When a function is called, the compiler looks for the function in the namespaces of its arguments
+// This is useful for operator overloading and functions that are closely related to a class
+// In this example, reveal_value is found via ADL because it is a friend of HiddenFriend.
+
+//ADL will look for function in following order:
+//1. Global namespace
+//2. Namespace of the class of the first argument (if any)
+//3. Namespace of the class of the second argument (if any)
+//... and so on for all arguments
+//In case of swap function, if we use using std::swap; inside the function, it will first look for swap in the namespace of the arguments (which could be a custom swap function for that type), and if not found, it will fall back to std::swap.
+
+class CustomType; // Forward declaration for ADL example
+
+//Example of simple array class with usage of HiddenFriend idiom.
+template <typename T>
+class Array {
+public:
+    Array(T* array, int size) : array_{array}, size_{size} {}  //Constructor
+    ~Array() { delete[] array_; }  //Destructor
+
+    T& operator[](int index) { return array_[index]; }  //Indexing operator
+    int size() const { return size_; }  //Size getter
+
+    friend void swap(Array& a1, Array& a2) noexcept {  //Friend function to swap two arrays
+        using std::swap; //Enable ADL for swap function - in case T has a custom swap implementation that should be used. Otherwise, in next lines std::swap would be used.
+        std::swap(a1.array_, a2.array_);
+        std::swap(a1.size_, a2.size_);
+    }
+
+private:
+    T* array_;
+    int size_;
+};
+
+class CustomType {
+public:
+    CustomType(int v) : value(v) {}
+    int getValue() const { return value; }
+
+    friend void swap(CustomType& c1, CustomType& c2) { //Custom swap function for CustomType
+        std::cout << "Custom swap called\n";
+        std::swap(c1.value, c2.value);
+    }
+
+private:
+    int value;
+};
+
+void array_usage_example() {
+    std::cout << "Array usage example with ADL and Hidden Friend idiom:\n";
+    Array<int> arr1(new int[3]{1, 2, 3}, 3);
+    Array<int> arr2(new int[3]{4, 5, 6}, 3);
+
+    std::cout << "Before swap:\n";
+    for (int i = 0; i < arr1.size(); ++i) {
+        std::cout << arr1[i] << " "; // Outputs: 1 2 3
+    }
+    std::cout << std::endl;
+    for (int i = 0; i < arr2.size(); ++i) {
+        std::cout << arr2[i] << " "; // Outputs: 4 5    6
+    }
+    std::cout << std::endl; 
+    swap(arr1, arr2); // Calls the friend swap function
+
+    std::cout << "After swap:\n";
+    for (int i = 0; i < arr1.size(); ++i) {
+        std::cout << arr1[i] << " "; // Outputs: 4 5 6
+    }
+    std::cout << std::endl;
+    for (int i = 0; i < arr2.size(); ++i) {
+        std::cout << arr2[i] << " "; // Outputs: 1 2 3
+    }
+    std::cout << std::endl;
+
+    std::cout << "Array with CustomType and custom swap usage example:\n";
+    Array<CustomType> carr1(new CustomType[2]{CustomType(1), CustomType(2)}, 2);
+    Array<CustomType> carr2(new CustomType[2]{CustomType(10), CustomType(20)}, 2);
+    std::cout << "Before swap:\n";
+    for (int i = 0; i < carr1.size(); ++i) {
+        std::cout << carr1[i].getValue() << " "; // Outputs: 1 2
+    }
+    std::cout << std::endl;
+    for (int i = 0; i < carr2.size(); ++i) {
+        std::cout << carr2[i].getValue() << " "; // Outputs: 10 20
+    }
+    std::cout << std::endl;
+
+    swap(carr1, carr2); // Calls the friend swap function, which in turn calls CustomType's custom swap
+    std::cout << "After swap:\n";
+    for (int i = 0; i < carr1.size(); ++i) {
+        std::cout << carr1[i].getValue() << " "; // Outputs: 10 20
+    }
+    std::cout << std::endl;
+    for (int i = 0; i < carr2.size(); ++i) {
+        std::cout << carr2[i].getValue() << " "; // Outputs: 1 2
+    }
+    std::cout << std::endl;
+
+    std::cout << "Custom type swap example:\n";
+    CustomType ct1(100);
+    CustomType ct2(200);
+    std::cout << "Before swap: ct1 = " << ct1.getValue() << ", ct2 = " << ct2.getValue() << std::endl;
+    swap(ct1, ct2); // Calls CustomType's custom swap
+    std::cout << "After swap: ct1 = " << ct1.getValue() << ", ct2 = " << ct2.getValue() << std::endl;
+}
+
+void hidden_friend_example() {
+    std::cout << "3. Hidden Friend idiom example:\n";
+    HiddenFriend hf(42);
+    reveal_value(hf); // Accessing private member via friend function
+    array_usage_example();
+}
+
+//4. Copy - and-swap idiom - provides strong exception safety by implementing copy assignment operator using copy constructor and a swap function.
+
+template <typename T>
+class Array_2 {
+public:
+    Array_2(T* array, int size) : array_{array}, size_{size} {}  //Constructor
+    ~Array_2() { delete[] array_; }  //Destructor
+
+    Array_2(const Array_2& other) : array_{new T[other.size_]}, size_{other.size_} { //Copy constructor - follow rule of 5
+        for (int i = 0; i < size_; ++i) {
+            array_[i] = other.array_[i];
+        }
+    }
+
+    Array_2(Array_2&& other) noexcept : array_{other.array_}, size_{other.size_} { //Move constructor - follow rule of 5
+        other.array_ = nullptr;
+        other.size_ = 0;
+    }
+
+    T& operator[](int index) { return array_[index]; }  //Indexing operator
+    int size() const { return size_; }  //Size getter
+
+    friend void swap(Array_2& a1, Array_2& a2) noexcept {  //Friend function to swap two arrays
+        using std::swap; //Enable ADL for swap function - in case T has a custom swap implementation that should be used. Otherwise, in next lines std::swap would be used.
+        std::swap(a1.array_, a2.array_);
+        std::swap(a1.size_, a2.size_);
+    }
+
+    Array_2& operator=(Array_2 other) noexcept {  //Copy-and-swap idiom - handles copy and move assignment operators at once. Provides exception free level of safety.
+        swap(*this, other); //Swap the contents
+        return *this;
+    }
+
+private:
+    T* array_;
+    int size_;
+};
+
+void copy_and_swap_example() {
+    std::cout << "4. Copy-and-Swap idiom example:\n";
+    Array_2<int> arr1(new int[3]{1, 2, 3}, 3);
+    Array_2<int> arr2(new int[3]{4, 5, 6}, 3);
+
+    std::cout << "Before assignment:\n";
+    for (int i = 0; i < arr1.size(); ++i) {
+        std::cout << arr1[i] << " "; // Outputs: 1 2 3
+    }
+    std::cout << std::endl;
+    for (int i = 0; i < arr2.size(); ++i) {
+        std::cout << arr2[i] << " "; // Outputs: 4 5 6
+    }
+    std::cout << std::endl;
+
+    arr1 = arr2; // Uses copy-and-swap idiom
+
+    std::cout << "After assignment:\n";
+    for (int i = 0; i < arr1.size(); ++i) {
+        std::cout << arr1[i] << " "; // Outputs: 4 5 6
+    }
+    std::cout << std::endl;
+}
+
+
+void idioms_main()
+{
+    std::cout << "------ CPP20 Idioms ------ \n\n";
+    raii_example();
+    non_copyable_example();
+    hidden_friend_example();
+    copy_and_swap_example();
+    std::cout << "\n-------------------------- \n";
+}
