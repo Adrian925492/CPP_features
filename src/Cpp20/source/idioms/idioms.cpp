@@ -1,5 +1,10 @@
 #include "idioms.hpp"
 #include <iostream>
+#include <utility> // for std::swap
+#include <vector>
+#include <concepts>
+#include <ranges>
+#include <functional> // for std::invoke
 
 //1. RAII idiom - usage of constructors and destructors to manage resource allocation and deallocation. Based on calling destructor automatically when an object goes out of scope.
 class RAII {
@@ -221,6 +226,132 @@ void copy_and_swap_example() {
     std::cout << std::endl;
 }
 
+//5. Nebloids - a way to create function objects that can be used like regular functions, often used in conjunction with templates and type deduction.
+// Example: A simple nebloid that adds two values
+
+//Standard add function (defined in equivalent of std namespace)
+namespace myStd {
+    class A{};
+    class B{};
+    template <typename T>
+    void add(T&a, T&b) {
+        std::cout << "Standard add() called\n";
+    }
+}
+
+//Range add function (defined in equivalent of std::ranges namespace)
+namespace myRanges {
+    namespace addImpl {
+        struct _add {
+            template <typename T, typename = std::enable_if_t< std::is_same<T, myStd::A>::value >>
+            void operator()(T& a, T& b) const {
+                std::cout << "MyRange add() called\n";
+            }
+        };
+    }
+    inline constexpr addImpl::_add add{};    //Nebloid example
+}
+
+void standard_nebloid() {
+    std::cout << "Standard nebloid example:\n";
+
+    myStd::A a, b;  //Explicit give type of argument
+    add(a, b);      //Calls myStd::add
+
+    using namespace myRanges;   //Brings myRanges::add into scope - ADL is not used as a, b are type from myStd
+    myStd::A c, d;
+    add(c, d);      //Calls myRanges::add
+}
+
+//Example of usage of concepts and nebloids to create a contains function that checks if a value exists in a range. Supports std::ranges.
+namespace detail {
+    struct contains_fn final {  //Final type - informs compiler that this type will not be inherited from. Helps with optimization.
+
+        //std::identity - a projection that returns its argument unchanged. Useful as a default projection.
+        //std::indirect_binary_predicate - concept that checks if a binary predicate can be applied to the results of two projections.
+        //std::projected - a type that represents the result of applying a projection to an iterator's value type.
+        //std::ranges::equal_to - a standard equality comparison function object.
+
+        // Using C++20 concepts to constrain the template parameters. Default signature of customized point object.
+        //It - input iterator type
+        //Sent - sentinel type (end iterator or sentinel)
+        //T - type of the value to search for
+        //Proj - projection function type (defaults to identity function)
+        //Function object for operation on iterators.
+        template <std::input_iterator It, std::sentinel_for<It> Sent, typename T, typename Proj = std::identity>
+        requires std::indirect_binary_predicate<std::ranges::equal_to, std::projected<It, Proj>, const T*>
+        constexpr bool operator()(It first, Sent last, const T& value, Proj proj = {}) const 
+        {
+            while(first != last && std::invoke(proj, *first) != value) {
+                ++first;
+            }
+            return first != last;
+        }
+
+        // Overload for ranges - allows passing a range directly instead of begin and end iterators.
+        template <std::ranges::input_range Rng, typename T, typename Proj = std::identity>
+        requires std::indirect_binary_predicate<std::ranges::equal_to, std::projected<std::ranges::iterator_t<Rng>, Proj>, const T*>
+        constexpr bool operator()(Rng&& rng, const T& value, Proj proj = {}) const {
+            return (*this)(std::ranges::begin(rng), std::ranges::end(rng), value, std::move(proj)); // Forward to the iterator-based overload
+        }
+    };
+}
+
+inline constexpr detail::contains_fn contains{}; // Inline variable - ensures single instance across translation units. Constexpr - can be evaluated at compile time. Nebloid instantioation. Explicit instantiation of contains_fn type. 
+// Blocks ADL for contains function, as defined explicitly in the global namespace.
+
+void nebloid_example() {
+    std::cout << "5. Nebloid example:\n";
+
+    standard_nebloid();
+
+    std::cout << "Extended nebloid example:\n";
+    std::vector<int> vec = {1, 2, 3, 4, 5};
+    std::cout << "Contains 3 in vec {1, 2, 3, 4, 5}: " << (contains(vec, 3) ? "true" : "false") << std::endl; // Outputs: true
+    std::cout << "Contains 6 in vec {1, 2, 3, 4, 5}: " << (contains(vec, 6) ? "true" : "false") << std::endl; // Outputs: false
+    //Usage of contains with projection
+    std::cout << "Contains 5 in vec {1, 2, 3, 4, 5} with projection (value = 5 * 2): " 
+              << (contains(vec, 5, [](int v) { return 2 * v; }) ? "true" : "false") << std::endl; // Outputs: true
+
+    //Usage with iterators
+    std::cout << "Contains 4 in vec {1, 2, 3, 4, 5} using iterators: " 
+              << (contains(vec.begin(), vec.end(), 4) ? "true" : "false") << std::endl; // Outputs: true
+}
+
+//5. Policy based design
+
+struct NoPrint {
+    template <typename... Args>
+    void operator()(Args&&...) const {}
+};
+
+struct PrintToConsole {
+    template <typename... Args>
+    void operator()(Args&&... args) const {
+        (std::cout << ... << args) << std::endl;
+    }
+};
+
+template <typename T, typename PrintPolicy = NoPrint>
+class MyClass {
+public:
+    MyClass() {
+        PrintPolicy{}("MyClass constructor");
+    }
+
+    ~MyClass() {
+        PrintPolicy{}("MyClass destructor");
+    }
+};
+
+void print_example()
+{
+    std::cout << "6. Print example:\n";
+    std::cout << "No print policy class instantiation: \n";
+    MyClass<int> obj1;
+    std::cout << "Print policy class instantiation: \n";
+    MyClass<int, PrintToConsole> obj2;
+}
 
 void idioms_main()
 {
@@ -229,5 +360,7 @@ void idioms_main()
     non_copyable_example();
     hidden_friend_example();
     copy_and_swap_example();
+    nebloid_example();
+    print_example();
     std::cout << "\n-------------------------- \n";
 }
