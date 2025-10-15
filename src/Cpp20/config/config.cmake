@@ -15,6 +15,9 @@ message(STATUS "PROJECT_BINARY_DIR          = ${PROJECT_BINARY_DIR}")
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 
+#Cmake settings
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
+
 # Tell CMake to generatr compile_commands.json file
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 

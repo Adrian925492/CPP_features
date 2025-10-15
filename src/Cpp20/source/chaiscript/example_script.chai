@@ -1,0 +1,48 @@
+// Sample ChaiScript file demonstrating various features
+print("=== External ChaiScript File Example ===")
+
+// Define some variables
+var name = "ChaiScript"
+var version = 6.1
+var is_awesome = true
+
+print("Language: " + name)
+print("Version: " + to_string(version))
+print("Is awesome: " + to_string(is_awesome))
+
+// Define a function to calculate fibonacci numbers
+def fibonacci(n) {
+    if (n <= 1) {
+        return n;
+    } else {
+        return fibonacci(n - 1) + fibonacci(n - 2);
+    }
+}
+
+// Test fibonacci function
+print("\nFibonacci sequence:")
+for (var i = 0; i < 10; ++i) {
+    print("fib(" + to_string(i) + ") = " + to_string(fibonacci(i)))
+}
+
+// Use C++ functions and classes (these will be bound from C++)
+print("\n=== Using C++ Functions ===")
+if (function_exists("add_numbers")) {
+    var sum = add_numbers(15, 25)
+    print("C++ function result: 15 + 25 = " + to_string(sum))
+}
+
+if (function_exists("Calculator")) {
+    print("\n=== Using C++ Calculator Class ===")
+    var calc = Calculator(100)
+    calc.add(50)
+    calc.multiply(2)
+    print("Calculator operations: (100 + 50) * 2 = " + to_string(calc.get_value()))
+}
+
+// Define a function that can be called from C++
+def greet_user(user_name) {
+    return "Hello, " + user_name + "! Welcome to ChaiScript!"
+}
+
+print("\n=== Script completed successfully ===")

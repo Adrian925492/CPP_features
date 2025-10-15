@@ -27,6 +27,14 @@ include(config/clang-format.cmake)
 # Add source subdir
 add_subdirectory(source)
 
+# Declare and fetch ChaiScript
+FetchContent_Declare(
+    chaiscript_external
+    GIT_REPOSITORY https://github.com/ChaiScript/ChaiScript.git
+    GIT_TAG v6.1.0
+)
+FetchContent_MakeAvailable(chaiscript_external)
+
 # Include test subdirectory
 if(BUILD_TESTING)
     # Declare and fetch GoogleTest
