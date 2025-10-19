@@ -5,6 +5,10 @@
 #include <concepts>
 #include <ranges>
 #include <functional> // for std::invoke
+#include <tuple>
+#include <variant>
+#include <array>
+#include <memory>
 
 //1. RAII idiom - usage of constructors and destructors to manage resource allocation and deallocation. Based on calling destructor automatically when an object goes out of scope.
 class RAII {
@@ -318,7 +322,7 @@ void nebloid_example() {
               << (contains(vec.begin(), vec.end(), 4) ? "true" : "false") << std::endl; // Outputs: true
 }
 
-//5. Policy based design
+//6. Policy based design
 
 struct NoPrint {
     template <typename... Args>
@@ -353,6 +357,139 @@ void print_example()
     MyClass<int, PrintToConsole> obj2;
 }
 
+// 7. CRTP - Curiously Recurring Template Pattern idiom example - a technique where a class template derives from itself instantiated with a derived class.
+
+//Base class:
+template <typename Item>
+class Base {
+public:
+    void foo() {
+        static_cast<Item*>(this)->implementation(); // Calls derived class implementation
+    }
+};
+
+class Item1 : public Base<Item1> {
+public:
+    void implementation() {
+        std::cout << "Item1 implementation\n";
+    }
+};
+
+class Item2 : public Base<Item2> {
+public:
+    void implementation() {
+        std::cout << "Item2 implementation\n";
+    }
+};
+
+//CRTP idiom and organization elements in container.
+//Example 1 - use tuple
+//Example 2 - use std::variant type
+//Exmaple 3 - use inheritance from common base class with virtual functions.
+
+//Exmple 3:
+class CommonBase {
+public:
+    template <typename T> requires std::is_base_of_v<Base<T>, T>
+    explicit CommonBase(T&& item) : item_{std::forward<T>(item)} {}
+
+    void foo() {
+        std::visit([] <typename U> (Base<U>& arg) { arg.foo(); }, item_);
+    }
+private:
+    std::variant<Item1, Item2> item_;
+};
+
+
+
+void crtp_container_example() {
+    // Example 1 - use tuple
+    std::cout << "CRTP container example using std::tuple:\n";
+    std::tuple<Item1, Item2> items; //Contianier implementation
+    std::apply([] <typename... T> (Base<T>... args) { (args.foo(), ...); }, items);    //Call method over container elemnts.
+
+    // Example 2 - use std::variant type
+    std::cout << "CRTP container example using std::variant:\n";
+    using ItemVariant = std::variant<Item1, Item2>;
+    auto items_var = std::array{ItemVariant{Item1{}}, ItemVariant{Item2{}}};
+    for(const auto& el : items_var) {
+        std::visit([] <typename T> (Base<T> arg) { arg.foo(); }, el);
+    }
+
+    // Example 3 - use inheritance from common base class with virtual functions.
+    std::cout << "CRTP container example using common base class:\n";
+    auto items3 = std::array<CommonBase, 2>{CommonBase{Item1{}}, CommonBase{Item2{}}};
+    for(auto& el : items3) {
+        el.foo();
+    }
+}
+
+void crtp_example() {
+    std::cout << "7. CRTP example:\n";
+    Item1 item1;
+    item1.foo(); // Calls Item1 implementation
+
+    Item2 item2;
+    item2.foo(); // Calls Item2 implementation
+
+    crtp_container_example();
+}
+
+//8. Type erased idiom - allows storing and using objects of different types that share a common interface without exposing their concrete types. This is often achieved using a base class with virtual functions and storing pointers to the base class.
+
+//Interface
+struct TypeErasedBase {
+    virtual ~TypeErasedBase() = default;
+    virtual void foo() = 0;
+};
+
+//Template wrapper class that derives from TypeErasedBase
+template <typename T>
+class TypeErasedWrapper : public TypeErasedBase {
+public:
+    explicit TypeErasedWrapper(T t) : item_{std::move(t)} {}
+    void foo() override {
+        item_.foo();
+    }
+private:
+    T item_;
+};
+
+//Item supporting type erasure
+class ItemErasedCommon {
+public:
+    template <typename T>
+    explicit ItemErasedCommon(T t)
+        : item_{std::make_unique<TypeErasedWrapper<T>>(std::move(t))} {}
+    void foo() {
+        item_->foo();
+    }
+private:
+    std::unique_ptr<TypeErasedBase> item_;  //T concrete type not used (type erased)
+};
+
+class ErasedItem1 {     //No info about common IF !
+public:
+    void foo() {
+        std::cout << "ErasedItem1 implementation\n";
+    }
+};
+
+class ErasedItem2 {     //No info about common IF !
+public:
+    void foo() {
+        std::cout << "ErasedItem2 implementation\n";
+    }
+};
+
+void type_erased_example() {
+    std::cout << "Type Erased example:\n";
+    auto items = std::array{ItemErasedCommon{ErasedItem1{}}, ItemErasedCommon{ErasedItem2{}}};
+    for (auto& item : items) {
+        item.foo();
+    }
+}
+
 void idioms_main()
 {
     std::cout << "------ CPP20 Idioms ------ \n\n";
@@ -362,5 +499,7 @@ void idioms_main()
     copy_and_swap_example();
     nebloid_example();
     print_example();
+    crtp_example();
+    type_erased_example();
     std::cout << "\n-------------------------- \n";
 }

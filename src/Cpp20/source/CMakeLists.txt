@@ -11,6 +11,7 @@ add_subdirectory(modules)
 add_subdirectory(concepts)
 add_subdirectory(idioms)
 add_subdirectory(chaiscript)
+add_subdirectory(creationMechanisms)
 
 # Define project name
 project(Cpp20 VERSION 1.0.0)
@@ -32,6 +33,7 @@ target_link_libraries(
         modules
         concepts
         idioms
+        creation
 )
 
 add_custom_command(

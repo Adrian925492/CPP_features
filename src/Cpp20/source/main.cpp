@@ -5,6 +5,7 @@
 #include <modules.hpp>
 #include <concepts.hpp>
 #include <idioms.hpp>
+#include <creation.hpp>
 
 #include <iostream>
 
@@ -19,4 +20,5 @@ int main(void)
     modules_main();
     concepts_main();
     idioms_main();
+    creation_main();
 }
